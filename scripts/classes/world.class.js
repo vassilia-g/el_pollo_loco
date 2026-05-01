@@ -5,6 +5,7 @@ class World {
     cloud = [new Cloud()];
     character = new Character();
     chicken = [new Chicken(), new Chicken(), new Chicken()];
+    camera_x = 0;
     background = [
         new BackgroundObject("assets/graphics/5_background/layers/air.png", 0),
         new BackgroundObject("assets/graphics/5_background/layers/3_third_layer/1.png", 0),
@@ -37,10 +38,13 @@ class World {
     draw() {
         this.ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
     
+        this.ctx.translate(this.camera_x, 0);
+        
         this.addObjectsToMap(this.background);
         this.addToMap(this.character);
         this.addObjectsToMap(this.chicken);
         this.addObjectsToMap(this.cloud);
+        this.ctx.translate(-this.camera_x, 0);
         requestAnimationFrame(() => this.draw());
     }
 
