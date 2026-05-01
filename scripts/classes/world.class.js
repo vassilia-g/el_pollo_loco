@@ -2,16 +2,13 @@
  * Manages game objects and draws them on the canvas.
  */
 class World {
-    cloud = [new Cloud()];
+
     character = new Character();
-    chicken = [new Chicken(), new Chicken(), new Chicken()];
+    chicken = level1.chicken;
+    cloud = level1.cloud;
+    background = level1.background;
     camera_x = 0;
-    background = [
-        new BackgroundObject("assets/graphics/5_background/layers/air.png", 0),
-        new BackgroundObject("assets/graphics/5_background/layers/3_third_layer/1.png", 0),
-        new BackgroundObject("assets/graphics/5_background/layers/2_second_layer/1.png", 0),
-        new BackgroundObject("assets/graphics/5_background/layers/1_first_layer/1.png", 0)
-    ];
+    
 
     /**
      * The constructor of the World class. It initializes the canvas context and starts the drawing loop.
