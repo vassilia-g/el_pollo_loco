@@ -12,7 +12,6 @@ function init() {
     
 }
 
-
 window.addEventListener("keydown", (event) => {
     if (event.keyCode == 39 || event.keyCode == 68) {
         KEYBOARD.RIGHT = true;

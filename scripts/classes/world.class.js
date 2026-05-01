@@ -4,9 +4,7 @@
 class World {
 
     character = new Character();
-    chicken = level1.chicken;
-    cloud = level1.cloud;
-    background = level1.background;
+    level = level1;
     camera_x = 0;
     
 
@@ -37,10 +35,10 @@ class World {
     
         this.ctx.translate(this.camera_x, 0);
         
-        this.addObjectsToMap(this.background);
+        this.addObjectsToMap(this.level.background);
         this.addToMap(this.character);
-        this.addObjectsToMap(this.chicken);
-        this.addObjectsToMap(this.cloud);
+        this.addObjectsToMap(this.level.chicken);
+        this.addObjectsToMap(this.level.cloud);
         this.ctx.translate(-this.camera_x, 0);
         requestAnimationFrame(() => this.draw());
     }
