@@ -49,7 +49,17 @@ class World {
      * @param {MoveableObject} object - The object to be drawn
      */
     addToMap(object) {
-    this.ctx.drawImage(object.img, object.x, object.y, object.width, object.height);
+        if (object.otherDirection) {
+            this.ctx.save();
+            this.ctx.translate(object.width, 0);
+            this.ctx.scale(-1, 1);
+            object.x = object.x * -1;
+        }
+        this.ctx.drawImage(object.img, object.x, object.y, object.width, object.height);
+        if (object.otherDirection) {
+            object.x = object.x * -1;
+            this.ctx.restore();
+        }
     }
 
     /**

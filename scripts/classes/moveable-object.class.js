@@ -10,6 +10,7 @@ class MoveableObject {
     imageCache = []; 
     currentImage = 0;
     speed = 0.15;
+    otherDirection = false;
 
     /**
      * Load a single image from a path.

@@ -5,6 +5,7 @@ class Character extends MoveableObject {
     height = 200;
     width = 100;
     y = 275;
+    speed = 10;
     IMAGES_WALKING = [
             "assets/graphics/2_character_pepe/2_walk/W-21.png",
             "assets/graphics/2_character_pepe/2_walk/W-22.png",
@@ -35,15 +36,28 @@ class Character extends MoveableObject {
      * Animate the character by changing the image every 100ms
      */
     animate() {
-        
+        setInterval(() => {
+            if (this.world.keyboard.LEFT) {
+                this.x -= this.speed;
+                this.otherDirection = true;
+            }        
+        }, 1000 / 60); 
+
         setInterval(() => {
             if (this.world.keyboard.RIGHT) {
+                this.x += this.speed;
+                this.otherDirection = false;
+            }        
+        }, 1000 / 60);
+
+        setInterval(() => {
+            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 let index = this.currentImage % this.IMAGES_WALKING.length;
                 let path = this.IMAGES_WALKING[index];
                 this.img = this.imageCache[path];
                 this.currentImage++;
             }
-        }, 100);      
+        }, 50);      
     }
 
 }
