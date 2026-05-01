@@ -13,7 +13,7 @@ class Character extends MoveableObject {
             "assets/graphics/2_character_pepe/2_walk/W-25.png",
             "assets/graphics/2_character_pepe/2_walk/W-26.png"
     ];
-    
+    world;
 
     /**
      * Create the character and preload walk images.
@@ -28,18 +28,21 @@ class Character extends MoveableObject {
      * Make the character jump
      */
     jump() {
-        console.log("Jump function called");
+        // console.log("Jump function called");
     }
 
     /**
      * Animate the character by changing the image every 100ms
      */
     animate() {
+        
         setInterval(() => {
-            let index = this.currentImage % this.IMAGES_WALKING.length;
-            let path = this.IMAGES_WALKING[index];
-            this.img = this.imageCache[path];
-            this.currentImage++;
+            if (this.world.keyboard.RIGHT) {
+                let index = this.currentImage % this.IMAGES_WALKING.length;
+                let path = this.IMAGES_WALKING[index];
+                this.img = this.imageCache[path];
+                this.currentImage++;
+            }
         }, 100);      
     }
 

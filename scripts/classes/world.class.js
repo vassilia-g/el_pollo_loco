@@ -15,10 +15,20 @@ class World {
     /**
      * The constructor of the World class. It initializes the canvas context and starts the drawing loop.
      * @param {HTMLCanvasElement} canvas - The canvas element where the game will be drawn
+     * @param {Keyboard} keyboard - The keyboard instance to handle input
      */
-    constructor(canvas) {
+    constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
+        this.keyboard = keyboard;
         this.draw();
+        this.setWorld();
+    }
+
+    /**
+     * Set the world property of the character to this instance of the World class.
+     */
+    setWorld() {
+        this.character.world = this;
     }
     
     /**

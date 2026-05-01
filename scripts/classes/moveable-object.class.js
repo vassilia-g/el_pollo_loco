@@ -38,7 +38,7 @@ class MoveableObject {
      * Move the object to the right
      */
     moveRight() {
-        console.log("Move right");
+        // console.log("Move right");
     }
 
     /**
