@@ -28,7 +28,7 @@ class Character extends MoveableObject {
      * Make the character jump
      */
     jump() {
-        console.log("Jump");
+        console.log("Jump function called");
     }
 
     /**
