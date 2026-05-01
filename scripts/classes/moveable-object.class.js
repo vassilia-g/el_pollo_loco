@@ -50,4 +50,15 @@ class MoveableObject {
             this.x -= this.speed;
         }, 1000 / 60);   
     }
+
+    /**
+     * 
+     * @param {*} images 
+     */
+    playAnimation(images) {
+        let index = this.currentImage % this.IMAGES_WALKING.length;
+        let path = this.IMAGES_WALKING[index];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+    }
 }

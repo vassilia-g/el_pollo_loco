@@ -5,13 +5,18 @@ let KEYBOARD = new Keyboard();
 CANVAS.width = 960;
 CANVAS.height = 540;
 
-
+/**
+ * This function initializes the game by creating a new instance of the World class and passing the canvas and keyboard instances to it.
+ */
 function init() {
     world = new World(CANVAS, KEYBOARD);
     // console.log("My character is", world.character);
     
 }
 
+/**
+ * This class represents the main character of the game. It contains all methods and attributes that are needed for the character.
+ */
 window.addEventListener("keydown", (event) => {
     if (event.keyCode == 39 || event.keyCode == 68) {
         KEYBOARD.RIGHT = true;
@@ -35,6 +40,9 @@ window.addEventListener("keydown", (event) => {
     }
 });
 
+/**
+ * This class represents the main character of the game. It contains all methods and attributes that are needed for the character.
+ */
 window.addEventListener("keyup", (event) => {
     if (event.keyCode == 39 || event.keyCode == 68) {
         KEYBOARD.RIGHT = false;

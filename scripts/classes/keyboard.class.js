@@ -1,3 +1,6 @@
+/**
+ * Class for handling keyboard input.
+ */
 class Keyboard {
     LEFT = false;
     RIGHT = false;

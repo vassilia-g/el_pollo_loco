@@ -1,8 +1,13 @@
+/**
+ * Level 1 loading background, clouds, chickens and endboss.
+ * The level is created by instantiating the Level class with the respective objects.
+ */
 const level1 = new Level(
     [
         new Chicken(), 
         new Chicken(), 
-        new Chicken()
+        new Chicken(),
+        new Endboss()
     ],
     [
         new Cloud()
