@@ -8,6 +8,8 @@ class MoveableObject {
     width = 100;
     img;
     imageCache = []; 
+    currentImage = 0;
+    speed = 0.15;
 
     /**
      * Load a single image from a path.
@@ -43,6 +45,8 @@ class MoveableObject {
      * Move the object to the left
      */
     moveLeft() {
-        console.log("Move left");
+        setInterval(() => {
+            this.x -= this.speed;
+        }, 1000 / 60);   
     }
 }

@@ -13,7 +13,7 @@ class Character extends MoveableObject {
             "assets/graphics/2_character_pepe/2_walk/W-25.png",
             "assets/graphics/2_character_pepe/2_walk/W-26.png"
     ];
-    currentImage = 0;
+    
 
     /**
      * Create the character and preload walk images.
@@ -40,7 +40,7 @@ class Character extends MoveableObject {
             let path = this.IMAGES_WALKING[index];
             this.img = this.imageCache[path];
             this.currentImage++;
-        }, 1000);      
+        }, 100);      
     }
 
 }
