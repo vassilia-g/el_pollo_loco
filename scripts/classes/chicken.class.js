@@ -1,3 +1,6 @@
+/**
+ * Load the chicken image and set a random start x position.
+ */
 class Chicken extends MoveableObject {
     width = 80;
     height = 60;
