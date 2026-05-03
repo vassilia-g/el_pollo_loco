@@ -56,8 +56,8 @@ class MoveableObject {
      * @param {*} images 
      */
     playAnimation(images) {
-        let index = this.currentImage % this.IMAGES_WALKING.length;
-        let path = this.IMAGES_WALKING[index];
+        let index = this.currentImage % images.length;
+        let path = images[index];
         this.img = this.imageCache[path];
         this.currentImage++;
     }
