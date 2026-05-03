@@ -150,7 +150,7 @@ class Character extends MoveableObject {
             const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
 
             if ((!this.world.keyboard.RIGHT && !this.world.keyboard.LEFT || bothHorizontal) && !this.isJumping) {
-                if (Date.now() - this.lastMoveTime > 15000) {
+                if (Date.now() - this.lastMoveTime > 7000) {
                     this.playAnimation(this.IMAGES_LONG_IDLE);
                 } else {
                     this.playAnimation(this.IMAGES_IDLE);
