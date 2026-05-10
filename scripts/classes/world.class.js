@@ -38,6 +38,7 @@ class World {
         this.addObjectsToMap(this.level.background);
         this.addObjectsToMap(this.level.cloud);
         this.addObjectsToMap(this.level.coins);
+        this.addObjectsToMap(this.level.salsa);
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.chicken);
         

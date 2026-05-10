@@ -44,14 +44,30 @@ const level1 = new Level(
         new BackgroundObject("assets/graphics/5_background/layers/1_first_layer/2.png", 2880),
     ],
     [
-        new Coins(300),   // Coin at x=300
-        new Coins(450),   // Coin at x=450
-        new Coins(600),   // Coin at x=600
-        new Coins(850),   // Coin at x=850
-        new Coins(1000),  // Coin at x=1000
-        new Coins(1200),  // Coin at x=1200
-        new Coins(1500)   // Coin at x=1500
+        new Coins(300),   
+        new Coins(450),
+        new Coins(600),   
+        new Coins(850),   
+        new Coins(1000),  
+        new Coins(1200),  
+        new Coins(1500)   
 
     ],
-    []  // Empty array for salsa
+    [
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", -500),
+        new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", -450),
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", -200),
+        new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", -100), 
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 400),   // Salsa at x=400, 
+        new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 500),
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 700),   // Salsa at x=400, 
+        new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 750),
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1000),   // Salsa at x=400, 
+        new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 1150),
+        new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 1450),
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1700),
+        new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 1980),
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 2100), 
+        
+    ]  // Empty array for salsa
 );
