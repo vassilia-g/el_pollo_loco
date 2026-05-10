@@ -1,7 +1,7 @@
 class Salsa extends MoveableObject {
     width = 60;
     height = 60;
-    y = 415;
+    y = 412;
     IMAGES_SALSA_ROTATION = [
         "assets/graphics/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
         "assets/graphics/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png",
