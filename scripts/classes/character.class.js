@@ -77,6 +77,8 @@ class Character extends MoveableObject {
      * Animate the character by changing the image every 100ms
      */
     animate() {
+        let lastAnimation = '';
+        /**
         /**
          * Move the character left or right and update the camera position every 16ms (60 frames per second)
          */
@@ -133,30 +135,40 @@ class Character extends MoveableObject {
         }, 1000 / 60);
 
         /**
-         * Play walking animation or jumping animation based on current state.
+         * Play animation based on current state.
          */
         setInterval(() => {
-            const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
-
             if (this.isJumping) {
+                if (lastAnimation !== 'jumping') {
+                    this.currentImage = 0;
+                    lastAnimation = 'jumping';
+                }
                 this.playAnimation(this.IMAGES_JUMPING);
-            } else if (!bothHorizontal && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
-        }, 150);
-        
-        /** Play idle animation only when not moving or jumping. */
-        setInterval(() => {
-            const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
-
-            if ((!this.world.keyboard.RIGHT && !this.world.keyboard.LEFT || bothHorizontal) && !this.isJumping) {
-                if (Date.now() - this.lastMoveTime > 7000) {
-                    this.playAnimation(this.IMAGES_LONG_IDLE);
+            } else {
+                const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
+                if (!bothHorizontal && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+                    if (lastAnimation !== 'walking') {
+                        this.currentImage = 0;
+                        lastAnimation = 'walking';
+                    }
+                    this.playAnimation(this.IMAGES_WALKING);
                 } else {
-                    this.playAnimation(this.IMAGES_IDLE);
+                    if (Date.now() - this.lastMoveTime > 7000) {
+                        if (lastAnimation !== 'long_idle') {
+                            this.currentImage = 0;
+                            lastAnimation = 'long_idle';
+                        }
+                        this.playAnimation(this.IMAGES_LONG_IDLE);
+                    } else {
+                        if (lastAnimation !== 'idle') {
+                            this.currentImage = 0;
+                            lastAnimation = 'idle';
+                        }
+                        this.playAnimation(this.IMAGES_IDLE);
+                    }
                 }
             }
-        }, 250);
+        }, 100);
     }
 
 }
