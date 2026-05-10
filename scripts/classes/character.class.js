@@ -5,7 +5,7 @@ class Character extends MoveableObject {
     height = 200;
     width = 100;
     y = 275;
-    speed = 7.5;
+    speed = 5.5;
     jumpSpeed = 26;
     velocityY = 0;
     groundY = 275;

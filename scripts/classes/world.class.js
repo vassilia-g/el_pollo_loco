@@ -37,8 +37,10 @@ class World {
         
         this.addObjectsToMap(this.level.background);
         this.addObjectsToMap(this.level.cloud);
+        this.addObjectsToMap(this.level.coins);
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.chicken);
+        
         
         this.ctx.translate(-this.camera_x, 0);
         requestAnimationFrame(() => this.draw());

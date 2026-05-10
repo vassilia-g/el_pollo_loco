@@ -14,9 +14,11 @@ class Level {
      * @param {*} cloud 
      * @param {*} background 
      */
-    constructor(chicken, cloud, background) {
+    constructor(chicken, cloud, background, coins, salsa) {
         this.chicken = chicken;
         this.cloud = cloud;
         this.background = background;
+        this.coins = coins;
+        this.salsa = salsa;
     }
 }
