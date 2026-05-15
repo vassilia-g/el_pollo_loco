@@ -6,11 +6,10 @@ class Character extends MoveableObject {
     width = 100;
     y = 140;
     speed = 5.5;
-    // jumpSpeed = 26;
-    // velocityY = 0;
-    // groundY = 275;
-    // isJumping = false;
-    // gravity = 1.5;
+    jumpSpeed = 20;
+    groundY = 275;
+    isJumping = false;
+
     
     world;
     lastMoveTime;
@@ -60,7 +59,7 @@ class Character extends MoveableObject {
     constructor() {
         super().loadImage("assets/graphics/2_character_pepe/2_walk/W-22.png");
         this.loadImages(this.IMAGES_WALKING);
-        this.applyGravity();
+        this.applyacceleration();
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
         this.loadImages(this.IMAGES_JUMPING);
@@ -119,23 +118,23 @@ class Character extends MoveableObject {
                 this.lastMoveTime = Date.now();
             }
 
-            // if (this.world.keyboard.UP_PRESSED && !this.isJumping) {
-            //     this.velocityY = -this.jumpSpeed;
-            //     this.isJumping = true;
-            //     this.lastMoveTime = Date.now();
-            //     this.world.keyboard.UP_PRESSED = false;
-            // }
+            if (this.world.keyboard.UP_PRESSED && !this.isJumping) {
+                this.speedY = -this.jumpSpeed;
+                this.isJumping = true;
+                this.lastMoveTime = Date.now();
+                this.world.keyboard.UP_PRESSED = false;
+            }
 
-            // if (this.isJumping) {
-            //     this.y += this.velocityY;
-            //     this.velocityY += this.gravity;
+            if (this.isJumping) {
+                this.y += this.speedY;
+                this.speedY += this.acceleration;
 
-            //     if (this.y >= this.groundY) {
-            //         this.y = this.groundY;
-            //         this.isJumping = false;
-            //         this.velocityY = 0;
-            //     }
-            // }
+                if (this.y >= this.groundY) {
+                    this.y = this.groundY;
+                    this.isJumping = false;
+                    this.speedY = 0;
+                }
+            }
 
             this.world.camera_x = -this.x + 100;
         }, 1000 / 60);
@@ -144,33 +143,38 @@ class Character extends MoveableObject {
          * Play animation based on current state.
          */
         setInterval(() => {
-            if (this.isJumping) {
-                if (lastAnimation !== 'jumping') {
-                    this.currentImage = 0;
-                    lastAnimation = 'jumping';
-                }
+            if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
             } else {
-                const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
-                if (!bothHorizontal && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-                    if (lastAnimation !== 'walking') {
+
+                if (this.isJumping) {
+                    if (lastAnimation !== 'jumping') {
                         this.currentImage = 0;
-                        lastAnimation = 'walking';
+                        lastAnimation = 'jumping';
                     }
-                    this.playAnimation(this.IMAGES_WALKING);
+                    this.playAnimation(this.IMAGES_JUMPING);
                 } else {
-                    if (Date.now() - this.lastMoveTime > 7000) {
-                        if (lastAnimation !== 'long_idle') {
+                    const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
+                    if (!bothHorizontal && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+                        if (lastAnimation !== 'walking') {
                             this.currentImage = 0;
-                            lastAnimation = 'long_idle';
+                            lastAnimation = 'walking';
                         }
-                        this.playAnimation(this.IMAGES_LONG_IDLE);
+                        this.playAnimation(this.IMAGES_WALKING);
                     } else {
-                        if (lastAnimation !== 'idle') {
-                            this.currentImage = 0;
-                            lastAnimation = 'idle';
+                        if (Date.now() - this.lastMoveTime > 7000) {
+                            if (lastAnimation !== 'long_idle') {
+                                this.currentImage = 0;
+                                lastAnimation = 'long_idle';
+                            }
+                            this.playAnimation(this.IMAGES_LONG_IDLE);
+                        } else {
+                            if (lastAnimation !== 'idle') {
+                                this.currentImage = 0;
+                                lastAnimation = 'idle';
+                            }
+                            this.playAnimation(this.IMAGES_IDLE);
                         }
-                        this.playAnimation(this.IMAGES_IDLE);
                     }
                 }
             }

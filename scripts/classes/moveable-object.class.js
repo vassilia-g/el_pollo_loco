@@ -12,12 +12,12 @@ class MoveableObject {
     speed = 0.15;
     otherDirection = false;
     speedY = 0;
-    acceleration = 1;
+    acceleration = 0.8;
 
     /**
-     * Apply gravity to the object, making it fall down if it's above the ground level.
+     * Apply acceleration to the object, making it fall down if it's above the ground level.
      */
-    applyGravity() {
+    applyacceleration() {
         setInterval(() => {
             if (this.y < 271) {
                 this.speedY += this.acceleration;
