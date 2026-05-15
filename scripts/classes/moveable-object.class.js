@@ -11,6 +11,28 @@ class MoveableObject {
     currentImage = 0;
     speed = 0.15;
     otherDirection = false;
+    speedY = 0;
+    acceleration = 1;
+
+    /**
+     * Apply gravity to the object, making it fall down if it's above the ground level.
+     */
+    applyGravity() {
+        setInterval(() => {
+            if (this.y < 271) {
+                this.speedY += this.acceleration;
+                this.y += this.speedY;
+            }
+        }, 1000 / 45);
+    }
+
+    /**
+     * Check if the object is above the ground level.
+     * @returns {boolean} True if the object is above the ground, false otherwise.
+     */
+    isAboveGround() {
+        return this.y < 271;
+    }
 
     /**
      * Load a single image from a path.

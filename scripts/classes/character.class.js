@@ -4,13 +4,14 @@
 class Character extends MoveableObject {
     height = 200;
     width = 100;
-    y = 275;
+    y = 140;
     speed = 5.5;
-    jumpSpeed = 26;
-    velocityY = 0;
-    groundY = 275;
-    isJumping = false;
-    gravity = 1.5;
+    // jumpSpeed = 26;
+    // velocityY = 0;
+    // groundY = 275;
+    // isJumping = false;
+    // gravity = 1.5;
+    
     world;
     lastMoveTime;
     IMAGES_WALKING = [
@@ -59,13 +60,18 @@ class Character extends MoveableObject {
     constructor() {
         super().loadImage("assets/graphics/2_character_pepe/2_walk/W-22.png");
         this.loadImages(this.IMAGES_WALKING);
+        this.applyGravity();
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
         this.loadImages(this.IMAGES_JUMPING);
+        
         this.lastMoveTime = Date.now();
+        
         this.animate();
     }
     
+    
+
     /**
      * Make the character jump
      */
@@ -113,23 +119,23 @@ class Character extends MoveableObject {
                 this.lastMoveTime = Date.now();
             }
 
-            if (this.world.keyboard.UP_PRESSED && !this.isJumping) {
-                this.velocityY = -this.jumpSpeed;
-                this.isJumping = true;
-                this.lastMoveTime = Date.now();
-                this.world.keyboard.UP_PRESSED = false;
-            }
+            // if (this.world.keyboard.UP_PRESSED && !this.isJumping) {
+            //     this.velocityY = -this.jumpSpeed;
+            //     this.isJumping = true;
+            //     this.lastMoveTime = Date.now();
+            //     this.world.keyboard.UP_PRESSED = false;
+            // }
 
-            if (this.isJumping) {
-                this.y += this.velocityY;
-                this.velocityY += this.gravity;
+            // if (this.isJumping) {
+            //     this.y += this.velocityY;
+            //     this.velocityY += this.gravity;
 
-                if (this.y >= this.groundY) {
-                    this.y = this.groundY;
-                    this.isJumping = false;
-                    this.velocityY = 0;
-                }
-            }
+            //     if (this.y >= this.groundY) {
+            //         this.y = this.groundY;
+            //         this.isJumping = false;
+            //         this.velocityY = 0;
+            //     }
+            // }
 
             this.world.camera_x = -this.x + 100;
         }, 1000 / 60);
