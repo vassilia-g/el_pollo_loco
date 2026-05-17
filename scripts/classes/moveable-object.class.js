@@ -23,15 +23,17 @@ class MoveableObject {
     }
 
     /**
-     * draw a blue frame around the object for debugging purposes.
+     * draw a blue frame around the object for debugging purposes only if the object is an instance of Character, Chicken, Endboss, Salsa or Coins.
      * @param {*} ctx - The canvas context to draw on
      */
     drawFrame(ctx) {
-        ctx.beginPath();
-        ctx.lineWidth = "10";
-        ctx.strokeStyle = "blue";
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.stroke();
+        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof Salsa || this instanceof Coins) {
+            ctx.beginPath();
+            ctx.lineWidth = "10";
+            ctx.strokeStyle = "blue";
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke();
+        }
     }
 
     /**
