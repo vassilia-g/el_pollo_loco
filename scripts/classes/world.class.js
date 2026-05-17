@@ -5,6 +5,7 @@ class World {
 
     character = new Character();
     level = level1;
+    camera_x_float = 0;
     camera_x = 0;
     
 
@@ -32,17 +33,14 @@ class World {
      */
     draw() {
         this.ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
-    
+        this.camera_x = Math.round(this.camera_x_float || this.camera_x);
         this.ctx.translate(this.camera_x, 0);
-        
         this.addObjectsToMap(this.level.background);
         this.addObjectsToMap(this.level.cloud);
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.salsa);
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.chicken);
-        
-        
         this.ctx.translate(-this.camera_x, 0);
         requestAnimationFrame(() => this.draw());
     }

@@ -66,16 +66,16 @@ const level1 = new Level(
         new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", -450),
         new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", -200),
         new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", -100), 
-        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 400),   // Salsa at x=400, 
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 400),    
         new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 500),
-        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 700),   // Salsa at x=400, 
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 700),   
         new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 750),
-        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1000),   // Salsa at x=400, 
+        new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1000),    
         new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 1150),
         new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 1450),
         new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 1700),
         new Salsa("assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png", 1980),
         new Salsa("assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png", 2100), 
         
-    ]  // Empty array for salsa
+    ]
 );

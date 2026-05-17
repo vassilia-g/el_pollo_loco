@@ -143,8 +143,12 @@ class Character extends MoveableObject {
      * Update the camera position based on the character's x position to keep the character centered on the screen.
      */
     updateCamera() {
-        this.world.camera_x = -this.x + 100;
-        console.log(this.world.camera_x);
+        const cam = -this.x + 100;
+        this.world.camera_x_float = cam;
+        const roundedCam = Math.round(cam);
+        if (this.world.camera_x !== roundedCam) {
+            this.world.camera_x = roundedCam;
+        }
     }
 
     /**
