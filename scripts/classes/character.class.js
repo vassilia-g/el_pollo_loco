@@ -9,8 +9,6 @@ class Character extends MoveableObject {
     jumpSpeed = 20;
     groundY = 275;
     isJumping = false;
-
-    
     world;
     lastMoveTime;
     IMAGES_WALKING = [
@@ -68,117 +66,175 @@ class Character extends MoveableObject {
         
         this.animate();
     }
-    
-    
-
-    /**
-     * Make the character jump
-     */
-    jump() {
-        
-    }
 
     /**
      * Animate the character by changing the image every 100ms
      */
     animate() {
         let lastAnimation = '';
-        /**
-        /**
-         * Move the character left or right and update the camera position every 16ms (60 frames per second)
-         */
         setInterval(() => {
-            if (this.world.keyboard.LEFT && this.x > -500) {
-                this.x -= this.speed;
-                this.otherDirection = true;
-                this.lastMoveTime = Date.now();
-            }        
-
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.x += this.speed;
-                this.otherDirection = false;
-                this.lastMoveTime = Date.now();
-            }
-            
-            this.world.camera_x = -this.x + 100;
-        }, 1000 / 60); 
-
-        setInterval(() => {
-            const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
-
-            if (!bothHorizontal && this.world.keyboard.LEFT && this.x > -500) {
-                this.x -= this.speed;
-                this.otherDirection = true;
-                this.lastMoveTime = Date.now();
-            }
-
-            if (!bothHorizontal && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.x += this.speed;
-                this.otherDirection = false;
-                this.lastMoveTime = Date.now();
-            }
-
-            if (this.world.keyboard.UP_PRESSED && !this.isJumping) {
-                this.speedY = -this.jumpSpeed;
-                this.isJumping = true;
-                this.lastMoveTime = Date.now();
-                this.world.keyboard.UP_PRESSED = false;
-            }
-
-            if (this.isJumping) {
-                this.y += this.speedY;
-                this.speedY += this.acceleration;
-
-                if (this.y >= this.groundY) {
-                    this.y = this.groundY;
-                    this.isJumping = false;
-                    this.speedY = 0;
-                }
-            }
-
-            this.world.camera_x = -this.x + 100;
+            this.handleMovement();
+            this.handleJumpInput();
+            this.applyGravity();
+            this.updateCamera();
         }, 1000 / 60);
 
-        /**
-         * Play animation based on current state.
-         */
         setInterval(() => {
-            if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUMPING);
-            } else {
-
-                if (this.isJumping) {
-                    if (lastAnimation !== 'jumping') {
-                        this.currentImage = 0;
-                        lastAnimation = 'jumping';
-                    }
-                    this.playAnimation(this.IMAGES_JUMPING);
-                } else {
-                    const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
-                    if (!bothHorizontal && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
-                        if (lastAnimation !== 'walking') {
-                            this.currentImage = 0;
-                            lastAnimation = 'walking';
-                        }
-                        this.playAnimation(this.IMAGES_WALKING);
-                    } else {
-                        if (Date.now() - this.lastMoveTime > 7000) {
-                            if (lastAnimation !== 'long_idle') {
-                                this.currentImage = 0;
-                                lastAnimation = 'long_idle';
-                            }
-                            this.playAnimation(this.IMAGES_LONG_IDLE);
-                        } else {
-                            if (lastAnimation !== 'idle') {
-                                this.currentImage = 0;
-                                lastAnimation = 'idle';
-                            }
-                            this.playAnimation(this.IMAGES_IDLE);
-                        }
-                    }
-                }
-            }
+            lastAnimation = this.updateAnimation(lastAnimation);
         }, 100);
+    }
+
+    /**
+     * Handle the character's horizontal movement based on keyboard input and update the last move time. 
+     */
+    handleMovement() {
+        const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
+        if (!bothHorizontal && this.world.keyboard.LEFT && this.x > -500) {
+            this.x -= this.speed;
+            this.otherDirection = true;
+            this.lastMoveTime = Date.now();
+        }
+        if (!bothHorizontal && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.x += this.speed;
+            this.otherDirection = false;
+            this.lastMoveTime = Date.now();
+        }
+    }
+
+    /**
+     * Make the character jump
+     */
+    jump() {
+        if (!this.isJumping) {
+            this.speedY = -this.jumpSpeed;
+            this.isJumping = true;
+            this.lastMoveTime = Date.now();
+        }
+    }
+
+    /**
+     * Handle the character's jump input and set the appropriate speed and state for jumping.
+     */
+    handleJumpInput() {
+        if (this.world.keyboard.UP_PRESSED) {
+            this.jump();
+            this.world.keyboard.UP_PRESSED = false;
+        }
+    }
+
+    /**
+     * This method applies gravity to the character by increasing the vertical speed and updating the y position. It also checks if the character has landed on the ground and resets the jumping state accordingly.
+     * @returns 
+     */
+    applyGravity() {
+        if (!this.isJumping) {
+            return;
+        }
+        this.y += this.speedY;
+        this.speedY += this.acceleration; 
+        if (this.y >= this.groundY) {
+            this.y = this.groundY;
+            this.isJumping = false;
+            this.speedY = 0;
+        }
+    }
+
+    /**
+     * Update the camera position based on the character's x position to keep the character centered on the screen.
+     */
+    updateCamera() {
+        this.world.camera_x = -this.x + 100;
+        console.log(this.world.camera_x);
+    }
+
+    /**
+     * Apply acceleration to the character for gravity effect.
+     */
+    applyacceleration() {
+        setInterval(() => {
+            if (this.y < this.groundY) {
+                this.speedY += this.acceleration;
+                this.y += this.speedY;
+            }
+        }, 1000 / 45);
+    }
+
+    /**
+     * Update the character's animation based on its state (jumping, walking, idle, long idle) and return the current animation state.
+     * @param {string} lastAnimation - The last animation state of the character
+     * @returns {string} The current animation state of the character
+     */
+    updateAnimation(lastAnimation) {
+        if (this.isAboveGround()) {
+            return this.playJumpingAnimation(lastAnimation);
+        }
+        if (this.isJumping) {
+            return this.playJumpingAnimation(lastAnimation);
+        }
+        const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
+        if (!bothHorizontal && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+            return this.playWalkingAnimation(lastAnimation);
+        }
+        if (Date.now() - this.lastMoveTime > 7000) {
+            return this.playLongIdleAnimation(lastAnimation);
+        }
+        return this.playIdleAnimation(lastAnimation);
+    }
+
+    /**
+     * Play the jumping animation by changing the image based on the current frame index and return the current animation state.
+     * @param {*} lastAnimation 
+     * @returns 
+     */
+    playJumpingAnimation(lastAnimation) {
+        if (lastAnimation !== 'jumping') {
+            this.currentImage = 0;
+            lastAnimation = 'jumping';
+        }
+        this.playAnimation(this.IMAGES_JUMPING);
+        return lastAnimation;
+    }
+
+    /**
+     * Play the walking animation by changing the image based on the current frame index and return the current animation state.
+     * @param {*} lastAnimation 
+     * @returns 
+     */
+    playWalkingAnimation(lastAnimation) {
+        if (lastAnimation !== 'walking') {
+            this.currentImage = 0;
+            lastAnimation = 'walking';
+        }
+        this.playAnimation(this.IMAGES_WALKING);
+        return lastAnimation;
+    }
+
+    /**
+     * Play the long idle animation by changing the image based on the current frame index and return the current animation state.
+     * @param {*} lastAnimation 
+     * @returns 
+     */
+    playLongIdleAnimation(lastAnimation) {
+        if (lastAnimation !== 'long_idle') {
+            this.currentImage = 0;
+            lastAnimation = 'long_idle';
+        }
+        this.playAnimation(this.IMAGES_LONG_IDLE);
+        return lastAnimation;
+    }
+
+    /**
+     * Play the idle animation by changing the image based on the current frame index and return the current animation state.
+     * @param {*} lastAnimation 
+     * @returns 
+     */
+    playIdleAnimation(lastAnimation) {
+        if (lastAnimation !== 'idle') {
+            this.currentImage = 0;
+            lastAnimation = 'idle';
+        }
+        this.playAnimation(this.IMAGES_IDLE);
+        return lastAnimation;
     }
 
 }

@@ -29,7 +29,7 @@ class MoveableObject {
     drawFrame(ctx) {
         if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof Salsa || this instanceof Coins) {
             ctx.beginPath();
-            ctx.lineWidth = "10";
+            ctx.lineWidth = "5";
             ctx.strokeStyle = "blue";
             ctx.rect(this.x, this.y, this.width, this.height);
             ctx.stroke();
