@@ -15,6 +15,26 @@ class MoveableObject {
     acceleration = 0.8;
 
     /**
+     * Draw the object on the canvas.
+     * @param {*} ctx - The canvas context to draw on
+     */
+    draw(ctx) {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
+
+    /**
+     * draw a blue frame around the object for debugging purposes.
+     * @param {*} ctx - The canvas context to draw on
+     */
+    drawFrame(ctx) {
+        ctx.beginPath();
+        ctx.lineWidth = "10";
+        ctx.strokeStyle = "blue";
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.stroke();
+    }
+
+    /**
      * Apply acceleration to the object, making it fall down if it's above the ground level.
      */
     applyacceleration() {
@@ -76,7 +96,7 @@ class MoveableObject {
     }
 
     /**
-     * 
+     * this method is used to play an animation by changing the image of the object based on the current frame index.
      * @param {*} images 
      */
     playAnimation(images) {
