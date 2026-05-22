@@ -30,7 +30,7 @@ class MoveableObject {
         if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof Salsa || this instanceof Coins) {
             ctx.beginPath();
             ctx.lineWidth = "5";
-            ctx.strokeStyle = "transparent"; // Change to "blue" to see the frames
+            ctx.strokeStyle = "transparent";
             ctx.rect(this.x, this.y, this.width, this.height);
             ctx.stroke();
         }
