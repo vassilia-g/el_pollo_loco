@@ -19,7 +19,31 @@ class World {
         this.keyboard = keyboard;
         this.draw();
         this.setWorld();
+        this.checkCollisions();
     }
+
+    /**
+     * Check for collisions between the character and other game objects (chickens, coins, salsa) at regular intervals.
+     */
+    checkCollisions() {
+        setInterval(() => {
+            this.level.chicken.forEach((chicken) => {
+                if (this.character.isColliding(chicken)) {
+                    console.log("Collision with chicken!");
+                }
+            });
+            this.level.coins.forEach((coin) => {
+                if (this.character.isColliding(coin)) {
+                    console.log("Collision with coin!");
+                }
+            });
+            this.level.salsa.forEach((salsa) => {
+                if (this.character.isColliding(salsa)) {
+                    console.log("Collision with salsa!");
+                }
+            });
+        }, 100);
+    }  
 
     /**
      * Set the world property of the character to this instance of the World class.

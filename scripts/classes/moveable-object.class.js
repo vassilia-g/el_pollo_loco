@@ -30,7 +30,7 @@ class MoveableObject {
         if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof Salsa || this instanceof Coins) {
             ctx.beginPath();
             ctx.lineWidth = "5";
-            ctx.strokeStyle = "transparent";
+            ctx.strokeStyle = "pink";
             ctx.rect(this.x, this.y, this.width, this.height);
             ctx.stroke();
         }
@@ -46,6 +46,18 @@ class MoveableObject {
                 this.y += this.speedY;
             }
         }, 1000 / 45);
+    }
+
+    /**
+     * Check if the object is colliding with another moveable object.
+     * @param {MoveableObject} mo - The other moveable object to check collision with
+     * @returns {boolean} True if there is a collision, false otherwise.
+     */
+    isColliding(mo) {
+        return this.x + this.width > mo.x &&
+               this.x < mo.x + mo.width &&
+               this.y + this.height > mo.y &&
+               this.y < mo.y + mo.height;
     }
 
     /**
