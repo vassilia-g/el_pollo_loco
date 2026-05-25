@@ -136,6 +136,14 @@ class Character extends MoveableObject {
     }
 
     /**
+     * Damage the character and wake him from long idle.
+     */
+    hit() {
+        super.hit();
+        this.lastMoveTime = Date.now();
+    }
+
+    /**
      * This method applies gravity to the character by increasing the vertical speed and updating the y position. It also checks if the character has landed on the ground and resets the jumping state accordingly.
      * @returns 
      */
