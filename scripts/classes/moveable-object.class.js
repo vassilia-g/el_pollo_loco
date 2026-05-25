@@ -13,13 +13,24 @@ class MoveableObject {
     otherDirection = false;
     speedY = 0;
     acceleration = 0.8;
+    health = 100;
+    damage = 20;
+    hurt = false;
+    opacity = 1;
+    visible = true;
 
     /**
      * Draw the object on the canvas.
      * @param {*} ctx - The canvas context to draw on
      */
     draw(ctx) {
+        if (!this.visible) {
+            return;
+        }
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        ctx.restore();
     }
 
     /**
@@ -27,13 +38,51 @@ class MoveableObject {
      * @param {*} ctx - The canvas context to draw on
      */
     drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss || this instanceof Salsa || this instanceof Coins) {
-            ctx.beginPath();
-            ctx.lineWidth = "5";
-            ctx.strokeStyle = "pink";
-            ctx.rect(this.x, this.y, this.width, this.height);
-            ctx.stroke();
+        if (!this.visible || !this.hasFrame()) {
+            return;
         }
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        this.drawBorder(ctx);
+        ctx.restore();
+    }
+
+    hasFrame() {
+        return this instanceof Character || this instanceof Chicken ||
+               this instanceof Endboss || this instanceof Salsa || this instanceof Coins;
+    }
+
+    drawBorder(ctx) {
+        ctx.beginPath();
+        ctx.lineWidth = "5";
+        ctx.strokeStyle = "pink";
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.stroke();
+    }
+
+    /**
+     * Reduce the health of the object by the damage value and log the current health to the console.
+    */
+    hit() {
+        this.health = Math.max(this.health - this.damage, 0);
+        this.hurt = true;
+        console.log("Object health: " + this.health);
+    }
+
+    /**
+     * Check whether the object should display its hurt state.
+     * @returns {boolean} True if the object is hurt, false otherwise.
+     */
+    isHurt() {
+        return this.hurt;
+    }
+
+    /**
+     * Check if the object is dead (i.e., its health is 0).
+     * @returns {boolean} True if the object is dead, false otherwise.
+     */
+    isDead() {
+        return this.health === 0;
     }
 
     /**
@@ -58,6 +107,16 @@ class MoveableObject {
                this.x < mo.x + mo.width &&
                this.y + this.height > mo.y &&
                this.y < mo.y + mo.height;
+    }
+
+    /**
+     * Check whether this object is falling onto another object's upper half.
+     * @param {MoveableObject} mo - The object being landed on
+     * @returns {boolean} True if this is a stomp collision
+     */
+    isJumpingOn(mo) {
+        const bottom = this.y + this.height;
+        return this.speedY > 0 && bottom <= mo.y + mo.height / 2;
     }
 
     /**

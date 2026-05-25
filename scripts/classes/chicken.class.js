@@ -10,6 +10,7 @@ class Chicken extends MoveableObject {
         "assets/graphics/3_enemies_chicken/chicken_normal/1_walk/2_w.png",
         "assets/graphics/3_enemies_chicken/chicken_normal/1_walk/3_w.png"
     ];
+    IMAGES_DEAD = "assets/graphics/3_enemies_chicken/chicken_normal/2_dead/dead.png";
     
     /**
      * Create the chicken and preload walk images.
@@ -27,9 +28,48 @@ class Chicken extends MoveableObject {
      */
     animate() {
         this.moveLeft();
-
         setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+            this.updateAnimation();
         }, 150);      
+    }
+
+    /**
+     * Play walking frames only while the chicken is alive.
+     */
+    updateAnimation() {
+        if (!this.isDead()) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+    /**
+     * Kill the chicken after it has been jumped on.
+     */
+    die() {
+        this.health = 0;
+        this.speed = 0;
+        this.loadImage(this.IMAGES_DEAD);
+        this.fadeOut();
+    }
+
+    /**
+     * Fade the dead chicken out over two seconds.
+     */
+    fadeOut() {
+        const interval = setInterval(() => {
+            this.reduceOpacity(interval);
+        }, 50);
+    }
+
+    /**
+     * Lower opacity and hide the chicken once fully transparent.
+     * @param {number} interval - Fade interval identifier
+     */
+    reduceOpacity(interval) {
+        this.opacity = Math.max(0, this.opacity - 0.025);
+        if (this.opacity === 0) {
+            this.visible = false;
+            clearInterval(interval);
+        }
     }
 }

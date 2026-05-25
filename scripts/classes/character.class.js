@@ -8,7 +8,7 @@ class Character extends MoveableObject {
     speed = 5.5;
     jumpSpeed = 20;
     groundY = 275;
-    isJumping = false;
+    isJumping = true;
     world;
     lastMoveTime;
     IMAGES_WALKING = [
@@ -50,6 +50,20 @@ class Character extends MoveableObject {
         "assets/graphics/2_character_pepe/3_jump/J-38.png",
         "assets/graphics/2_character_pepe/3_jump/J-39.png"
     ];
+    IMAGES_HURT = [
+        "assets/graphics/2_character_pepe/4_hurt/H-41.png",
+        "assets/graphics/2_character_pepe/4_hurt/H-42.png",
+        "assets/graphics/2_character_pepe/4_hurt/H-43.png"
+    ];
+    IMAGES_DEAD = [
+        "assets/graphics/2_character_pepe/5_dead/D-51.png",
+        "assets/graphics/2_character_pepe/5_dead/D-52.png",
+        "assets/graphics/2_character_pepe/5_dead/D-53.png",
+        "assets/graphics/2_character_pepe/5_dead/D-54.png",
+        "assets/graphics/2_character_pepe/5_dead/D-55.png",
+        "assets/graphics/2_character_pepe/5_dead/D-56.png",
+        "assets/graphics/2_character_pepe/5_dead/D-57.png"
+    ];
 
     /**
      * Create the character and preload walk images.
@@ -57,13 +71,12 @@ class Character extends MoveableObject {
     constructor() {
         super().loadImage("assets/graphics/2_character_pepe/2_walk/W-22.png");
         this.loadImages(this.IMAGES_WALKING);
-        this.applyacceleration();
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
         this.loadImages(this.IMAGES_JUMPING);
-        
+        this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_DEAD);
         this.lastMoveTime = Date.now();
-        
         this.animate();
     }
 
@@ -169,20 +182,55 @@ class Character extends MoveableObject {
      * @returns {string} The current animation state of the character
      */
     updateAnimation(lastAnimation) {
-        if (this.isAboveGround()) {
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+            return 'dead';
+        }
+        if (this.isHurt()) {
+            return this.playHurtAnimation(lastAnimation);
+        }
+        return this.updateActiveAnimation(lastAnimation);
+    }
+
+    /**
+     * Play one hurt animation after the character receives damage.
+     * @param {string} lastAnimation - The previous animation state
+     * @returns {string} The current animation state
+     */
+    playHurtAnimation(lastAnimation) {
+        if (lastAnimation !== 'hurt') {
+            this.currentImage = 0;
+        }
+        this.playAnimation(this.IMAGES_HURT);
+        this.hurt = this.currentImage < this.IMAGES_HURT.length;
+        return 'hurt';
+    }
+
+    /**
+     * Update the character's active animation based on its current state (jumping, walking, idle, long idle) and return the current animation state.
+     * @param {string} lastAnimation - The last animation state of the character
+     * @returns {string} The current animation state of the character
+     */
+    updateActiveAnimation(lastAnimation) {
+        if (this.isAboveGround() || this.isJumping) {
             return this.playJumpingAnimation(lastAnimation);
         }
-        if (this.isJumping) {
-            return this.playJumpingAnimation(lastAnimation);
-        }
-        const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
-        if (!bothHorizontal && (this.world.keyboard.RIGHT || this.world.keyboard.LEFT)) {
+        if (this.isWalking()) {
             return this.playWalkingAnimation(lastAnimation);
         }
         if (Date.now() - this.lastMoveTime > 7000) {
             return this.playLongIdleAnimation(lastAnimation);
         }
         return this.playIdleAnimation(lastAnimation);
+    }
+
+    /**
+     * Check if the character is currently walking by checking the keyboard input for left and right movement.
+     * @returns {boolean} True if the character is walking, false otherwise.
+     */
+    isWalking() {
+        const keyboard = this.world.keyboard;
+        return keyboard.RIGHT !== keyboard.LEFT;
     }
 
     /**
