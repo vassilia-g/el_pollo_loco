@@ -54,8 +54,8 @@ class MoveableObject {
 
     drawBorder(ctx) {
         ctx.beginPath();
-        ctx.lineWidth = "5";
-        ctx.strokeStyle = "pink";
+        ctx.lineWidth = "1";
+        ctx.strokeStyle = "transparent";
         ctx.rect(this.x, this.y, this.width, this.height);
         ctx.stroke();
     }

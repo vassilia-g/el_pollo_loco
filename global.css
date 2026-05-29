@@ -3,7 +3,10 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: rgb(252, 252, 252);
+    background-color: #ffcc01;
+    background-image: url('assets/background/background.png');
+    background-repeat: repeat;
+    background-size: 400px;
 }
 
 body {

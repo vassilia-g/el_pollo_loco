@@ -32,6 +32,9 @@ window.addEventListener("keydown", (event) => {
         KEYBOARD.DOWN = true;
     }
     if (event.keyCode == 32) {
+        if (!KEYBOARD.SPACE) {
+            KEYBOARD.SPACE_PRESSED = true;
+        }
         KEYBOARD.SPACE = true;
     }
 });
@@ -55,5 +58,6 @@ window.addEventListener("keyup", (event) => {
     }
     if (event.keyCode == 32) {
         KEYBOARD.SPACE = false;
+        KEYBOARD.SPACE_PRESSED = false;
     }
 });

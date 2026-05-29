@@ -26,4 +26,25 @@ class Coins extends MoveableObject {
             this.playAnimation(this.IMAGES_COINS);
         }, 400);
     }
+
+    /**
+     * Fade the coins out over two seconds.
+     */
+    fadeOut() {
+        const interval = setInterval(() => {
+            this.reduceOpacity(interval);
+        }, 20);
+    }
+
+    /**
+     * Lower opacity and hide the coins once fully transparent.
+     * @param {number} interval - Fade interval identifier
+     */
+    reduceOpacity(interval) {
+        this.opacity = Math.max(0, this.opacity - 0.025);
+        if (this.opacity === 0) {
+            this.visible = false;
+            clearInterval(interval);
+        }
+    }
 }

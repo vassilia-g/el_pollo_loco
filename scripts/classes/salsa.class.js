@@ -2,6 +2,10 @@ class Salsa extends MoveableObject {
     width = 60;
     height = 60;
     y = 412;
+    isThrown = false;
+    splashing = false;
+    throwInterval;
+    animationInterval;
     IMAGES_SALSA_ROTATION = [
         "assets/graphics/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
         "assets/graphics/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png",
@@ -25,5 +29,94 @@ class Salsa extends MoveableObject {
     constructor(imgPath, x) {
         super().loadImage(imgPath);
         this.x = x;
+        this.loadImages(this.IMAGES_SALSA_ROTATION);
+        this.loadImages(this.IMAGES_SALSA_SPLASH);
+    }
+
+    /**
+     * Throw the salsa bottle in the given direction.
+     * @param {number} direction - 1 throws right, -1 throws left
+     */
+    throw(direction) {
+        this.isThrown = true;
+        this.speedY = -15;
+        this.speedX = direction * 12;
+        this.currentImage = 0;
+        this.startThrowMovement();
+        this.startRotationAnimation();
+    }
+
+    /**
+     * Move the thrown bottle in an arc until it hits the ground.
+     */
+    startThrowMovement() {
+        this.throwInterval = setInterval(() => {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.speedY += this.acceleration;
+            if (this.y >= 410) {
+                this.splash();
+            }
+        }, 1000 / 60);
+    }
+
+    /**
+     * Rotate the bottle while it flies.
+     */
+    startRotationAnimation() {
+        this.animationInterval = setInterval(() => {
+            if (!this.splashing) {
+                this.playAnimation(this.IMAGES_SALSA_ROTATION);
+            }
+        }, 80);
+    }
+
+    /**
+     * Play the splash animation and hide the bottle afterwards.
+     */
+    splash() {
+        if (this.splashing) {
+            return;
+        }
+        this.splashing = true;
+        this.speedX = 0;
+        clearInterval(this.throwInterval);
+        clearInterval(this.animationInterval);
+        this.playSplashAnimation();
+    }
+
+    /**
+     * Animate the bottle splash once.
+     */
+    playSplashAnimation() {
+        this.currentImage = 0;
+        const interval = setInterval(() => {
+            this.playAnimation(this.IMAGES_SALSA_SPLASH);
+            if (this.currentImage >= this.IMAGES_SALSA_SPLASH.length) {
+                this.visible = false;
+                clearInterval(interval);
+            }
+        }, 80);
+    }
+
+    /**
+     * Fade the salsa bottles out over two seconds.
+     */
+    fadeOut() {
+        const interval = setInterval(() => {
+            this.reduceOpacity(interval);
+        }, 20);
+    }
+
+    /**
+     * Lower opacity and hide the salsa bottles once fully transparent.
+     * @param {number} interval - Fade interval identifier
+     */
+    reduceOpacity(interval) {
+        this.opacity = Math.max(0, this.opacity - 0.025);
+        if (this.opacity === 0) {
+            this.visible = false;
+            clearInterval(interval);
+        }
     }
 }

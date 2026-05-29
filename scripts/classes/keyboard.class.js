@@ -8,4 +8,5 @@ class Keyboard {
     UP_PRESSED = false;
     DOWN = false;
     SPACE = false;
+    SPACE_PRESSED = false;
 }
