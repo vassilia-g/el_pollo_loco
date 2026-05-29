@@ -115,17 +115,6 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Make the character jump
-     */
-    jump() {
-        if (!this.isJumping) {
-            this.speedY = -this.jumpSpeed;
-            this.isJumping = true;
-            this.lastMoveTime = Date.now();
-        }
-    }
-
-    /**
      * Handle the character's jump input and set the appropriate speed and state for jumping.
      */
     handleJumpInput() {
@@ -136,11 +125,14 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Damage the character and wake him from long idle.
+     * Make the character jump
      */
-    hit() {
-        super.hit();
-        this.lastMoveTime = Date.now();
+    jump() {
+        if (!this.isJumping) {
+            this.speedY = -this.jumpSpeed;
+            this.isJumping = true;
+            this.lastMoveTime = Date.now();
+        }
     }
 
     /**
@@ -182,6 +174,14 @@ class Character extends MoveableObject {
                 this.y += this.speedY;
             }
         }, 1000 / 45);
+    }
+
+    /**
+     * Damage the character and wake him from long idle.
+     */
+    hit() {
+        super.hit();
+        this.lastMoveTime = Date.now();
     }
 
     /**

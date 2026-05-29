@@ -58,6 +58,13 @@ class World {
     }
 
     /**
+     * Give the character access to keyboard, level and camera data in this world.
+     */
+    connectCharacterToWorld() {
+        this.character.world = this;
+    }
+
+    /**
      * Check for collisions between the character and other game objects (chickens, coins, salsa) at regular intervals.
      */
     checkCollisions() {
@@ -225,13 +232,6 @@ class World {
         return total === 0 ? 0 : (collected / total) * 100;
     }
 
-    /**
-     * Give the character access to keyboard, level and camera data in this world.
-     */
-    connectCharacterToWorld() {
-        this.character.world = this;
-    }
-    
     /**
      * Draw all game objects on the canvas and request the next animation frame.
      */
