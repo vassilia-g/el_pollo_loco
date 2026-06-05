@@ -2,8 +2,8 @@
  * Canvas status bar that switches image based on a percentage value.
  */
 class StatusBar extends MoveableObject {
-    width = 200;
-    height = 60;
+    width = 150;
+    height = 40;
     percentage = 100;
 
     /**

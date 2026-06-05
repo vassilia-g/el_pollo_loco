@@ -25,7 +25,7 @@ class World {
         "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/60.png",
         "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/80.png",
         "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/100.png"
-    ], 10, 60, 0);
+    ], 10, 40, 0);
     bottleBar = new StatusBar([
         "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/0.png",
         "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/20.png",
@@ -33,7 +33,7 @@ class World {
         "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/60.png",
         "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/80.png",
         "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/100.png"
-    ], 10, 110, 0);
+    ], 10, 72, 0);
     endbossBar = new StatusBar([
         "assets/graphics/7_statusbars/2_statusbar_endboss/orange/orange0.png",
         "assets/graphics/7_statusbars/2_statusbar_endboss/orange/orange20.png",

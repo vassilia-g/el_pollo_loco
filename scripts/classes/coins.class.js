@@ -33,7 +33,7 @@ class Coins extends MoveableObject {
     fadeOut() {
         const interval = setInterval(() => {
             this.reduceOpacity(interval);
-        }, 20);
+        }, 0.1);
     }
 
     /**
