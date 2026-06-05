@@ -16,6 +16,9 @@ function init() {
  * This class represents the main character of the game. It contains all methods and attributes that are needed for the character.
  */
 window.addEventListener("keydown", (event) => {
+     if (KEYBOARD.blocked) {
+        return;
+    }
     if (event.keyCode == 39 || event.keyCode == 68) {
         KEYBOARD.RIGHT = true;
     }
@@ -43,6 +46,9 @@ window.addEventListener("keydown", (event) => {
  * This class represents the main character of the game. It contains all methods and attributes that are needed for the character.
  */
 window.addEventListener("keyup", (event) => {
+     if (KEYBOARD.blocked) {
+        return;
+    }
     if (event.keyCode == 39 || event.keyCode == 68) {
         KEYBOARD.RIGHT = false;
     }

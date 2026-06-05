@@ -191,6 +191,7 @@ class Character extends MoveableObject {
      */
     updateAnimation(lastAnimation) {
         if (this.isDead()) {
+            this.characterIsDead();
             this.playAnimation(this.IMAGES_DEAD);
             return 'dead';
         }
@@ -198,6 +199,15 @@ class Character extends MoveableObject {
             return this.playHurtAnimation(lastAnimation);
         }
         return this.updateActiveAnimation(lastAnimation);
+    }
+
+    /**
+     * Handle the character's death by stopping movement, resetting jumping state, and disabling keyboard input.
+     */
+    characterIsDead(){
+        this.speedY = 0;
+        this.isJumping = false;
+        this.world.keyboard.block();
     }
 
     /**
