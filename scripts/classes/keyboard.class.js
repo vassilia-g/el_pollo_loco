@@ -28,5 +28,6 @@ class Keyboard {
 
     unblock() {
         this.blocked = false;
+        this.reset();
     }
 }

@@ -202,12 +202,11 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Handle the character's death by stopping movement, resetting jumping state, and disabling keyboard input.
+     * Handle the character's death by stopping movement and resetting jumping state.
      */
     characterIsDead(){
         this.speedY = 0;
         this.isJumping = false;
-        this.world.keyboard.block();
     }
 
     /**

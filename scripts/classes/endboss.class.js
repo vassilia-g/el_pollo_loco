@@ -2,8 +2,27 @@
  * Class for the endboss character.
  */
 class Endboss extends MoveableObject {
-
     IMAGES_WALKING = [
+        "assets/graphics/4_enemie_boss_chicken/1_walk/G1.png",
+        "assets/graphics/4_enemie_boss_chicken/1_walk/G2.png",
+        "assets/graphics/4_enemie_boss_chicken/1_walk/G3.png",
+        "assets/graphics/4_enemie_boss_chicken/1_walk/G4.png"
+    ];
+    IMAGES_ALERT = [
+        "assets/graphics/4_enemie_boss_chicken/2_alert/G5.png",
+        "assets/graphics/4_enemie_boss_chicken/2_alert/G6.png",
+        "assets/graphics/4_enemie_boss_chicken/2_alert/G7.png",
+        "assets/graphics/4_enemie_boss_chicken/2_alert/G8.png",
+        "assets/graphics/4_enemie_boss_chicken/2_alert/G9.png",
+        "assets/graphics/4_enemie_boss_chicken/2_alert/G10.png",
+        "assets/graphics/4_enemie_boss_chicken/2_alert/G11.png",
+        "assets/graphics/4_enemie_boss_chicken/2_alert/G12.png"
+    ];
+    IMAGES_ATTACK = [
+        "assets/graphics/4_enemie_boss_chicken/3_attack/G13.png",
+        "assets/graphics/4_enemie_boss_chicken/3_attack/G14.png",
+        "assets/graphics/4_enemie_boss_chicken/3_attack/G15.png",
+        "assets/graphics/4_enemie_boss_chicken/3_attack/G16.png",
         "assets/graphics/4_enemie_boss_chicken/3_attack/G17.png",
         "assets/graphics/4_enemie_boss_chicken/3_attack/G18.png",
         "assets/graphics/4_enemie_boss_chicken/3_attack/G19.png",
@@ -28,6 +47,9 @@ class Endboss extends MoveableObject {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_DEAD);
+        this.loadImages(this.IMAGES_ALERT);
+        this.loadImages(this.IMAGES_ATTACK);
+        this.speed = 0.15;
         this.x = 2550;
         this.y = 150;
         this.width = 250;
@@ -39,15 +61,26 @@ class Endboss extends MoveableObject {
      * Animate the endboss by changing the image every 150ms
      */
     animate() {
+        this.moveLeft();
         setInterval(() => {
             this.updateAnimation();
         }, 150);      
     }
 
     /**
+     * Play walking frames only while the Endboss is alive.
+     */
+    updateAnimation() {
+        if (!this.isDead()) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+    /**
      * Update the boss animation based on its current state.
      */
     updateAnimation() {
+        this.playAnimation(this.IMAGES_WALKING);
         if (this.isDead()) {
             this.playAnimation(this.IMAGES_DEAD);
             return;
@@ -57,7 +90,14 @@ class Endboss extends MoveableObject {
             this.hurt = this.currentImage < this.IMAGES_HURT.length;
             return;
         }
-        this.playAnimation(this.IMAGES_WALKING);
+        // if (this.isAlert()) {
+        //     this.playAnimation(this.IMAGES_ALERT);
+        //     return;
+        // }
+        // if (this.isAttacking()) {
+        //     this.playAnimation(this.IMAGES_ATTACK);
+        //     return;
+        // }
     }
 
     /**
@@ -77,7 +117,7 @@ class Endboss extends MoveableObject {
     fadeOut() {
         const interval = setInterval(() => {
             this.reduceOpacity(interval);
-        }, 80);
+        }, 50);
     }
 
     /**

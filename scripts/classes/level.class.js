@@ -6,7 +6,7 @@ class Level {
     chicken;
     cloud;
     background;
-    level_end_x = 2500;
+    level_end_x = 2800;
 
     /**
      * 

@@ -76,7 +76,22 @@ class World {
         setInterval(() => {
             this.checkThrowInput();
             this.checkThrowableCollisions();
+            this.checkGameEnd();
         }, 1000 / 60);
+    }
+
+    /**
+     * Stop keyboard input when the player loses or wins the game.
+     */
+    checkGameEnd() {
+        if (this.character.isDead()) {
+            this.keyboard.block();
+            return;
+        }
+        const endboss = this.level.chicken.find(enemy => enemy instanceof Endboss);
+        if (endboss && endboss.isDead()) {
+            this.keyboard.block();
+        }
     }
 
     /**
