@@ -107,6 +107,7 @@ class Endboss extends MoveableObject {
         super.hit();
         this.currentImage = 0;
         if (this.isDead()) {
+            this.speed = 0;
             this.fadeOut();
         }
     }

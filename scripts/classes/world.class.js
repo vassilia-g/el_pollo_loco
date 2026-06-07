@@ -10,6 +10,7 @@ class World {
     throwableSalsas = [];
     collectedCoins = 0;
     collectedBottles = 0;
+    maxBottles = 5;
     healthBar = new StatusBar([
         "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/0.png",
         "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/20.png",
@@ -167,6 +168,9 @@ class World {
      * @param {Salsa} salsa - The collected salsa bottle
      */
     collectSalsa(salsa) {
+        if (this.collectedBottles >= this.maxBottles) {
+            return;
+        }
         salsa.collected = true;
         salsa.fadeOut();
         this.collectedBottles++;
@@ -234,7 +238,7 @@ class World {
      * Update the bottle bar from the current inventory count.
      */
     updateBottleBar() {
-        this.bottleBar.setPercentage(this.getCollectionPercentage(this.collectedBottles, this.level.salsa.length));
+        this.bottleBar.setPercentage(this.getCollectionPercentage(this.collectedBottles, this.maxBottles));
     }
 
     /**

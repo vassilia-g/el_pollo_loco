@@ -6,7 +6,7 @@ class Character extends MoveableObject {
     width = 100;
     y = 140;
     speed = 5.5;
-    jumpSpeed = 20;
+    jumpSpeed = 17;
     groundY = 275;
     isJumping = true;
     world;
