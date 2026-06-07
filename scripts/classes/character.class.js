@@ -160,12 +160,34 @@ class Character extends MoveableObject {
             return;
         }
         this.y += this.speedY;
-        this.speedY += this.hasLandedOnce ? this.acceleration : this.startFallAcceleration; 
+        this.speedY += this.getGravityAcceleration(); 
+        this.updateStartFallKeyboard();
         if (this.y >= this.groundY) {
+            const wasStartFall = !this.hasLandedOnce;
             this.y = this.groundY;
             this.isJumping = false;
             this.speedY = 0;
             this.hasLandedOnce = true;
+            if (wasStartFall) {
+                this.world.keyboard.unblock();
+            }
+        }
+    }
+
+    /**
+     * Use slower gravity before the first landing and normal gravity afterwards.
+     * @returns {number} The current gravity acceleration
+     */
+    getGravityAcceleration() {
+        return this.hasLandedOnce ? this.acceleration : this.startFallAcceleration;
+    }
+
+    /**
+     * Block controls only while Pepe is falling into the level at game start.
+     */
+    updateStartFallKeyboard() {
+        if (!this.hasLandedOnce) {
+            this.world.keyboard.block();
         }
     }
 

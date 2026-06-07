@@ -226,8 +226,9 @@ class World {
             return;
         }
         if (enemy instanceof Chicken) {
-            enemy.die();
-        } else if (enemy instanceof Endboss) {
+            return;
+        }
+        if (enemy instanceof Endboss) {
             enemy.hit();
             this.endbossBar.setPercentage(enemy.health);
         }
