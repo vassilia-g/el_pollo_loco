@@ -9,6 +9,8 @@ class Character extends MoveableObject {
     jumpSpeed = 17;
     groundY = 275;
     isJumping = true;
+    hasLandedOnce = false;
+    startFallAcceleration = 0.15;
     world;
     lastMoveTime;
     deathAnimationStarted = false;
@@ -158,11 +160,12 @@ class Character extends MoveableObject {
             return;
         }
         this.y += this.speedY;
-        this.speedY += this.acceleration; 
+        this.speedY += this.hasLandedOnce ? this.acceleration : this.startFallAcceleration; 
         if (this.y >= this.groundY) {
             this.y = this.groundY;
             this.isJumping = false;
             this.speedY = 0;
+            this.hasLandedOnce = true;
         }
     }
 
