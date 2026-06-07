@@ -11,6 +11,10 @@ class Character extends MoveableObject {
     isJumping = true;
     world;
     lastMoveTime;
+    deathAnimationStarted = false;
+    deathAnimationFinished = false;
+    deathFallSpeed = 0;
+    deathFallAcceleration = 0.15;
     IMAGES_WALKING = [
         "assets/graphics/2_character_pepe/2_walk/W-21.png",
         "assets/graphics/2_character_pepe/2_walk/W-22.png",
@@ -101,6 +105,9 @@ class Character extends MoveableObject {
      * Handle the character's horizontal movement based on keyboard input and update the last move time. 
      */
     handleMovement() {
+        if (this.isDead()) {
+            return;
+        }
         const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
         if (!bothHorizontal && this.world.keyboard.LEFT && this.x > -500) {
             this.x -= this.speed;
@@ -118,6 +125,9 @@ class Character extends MoveableObject {
      * Handle the character's jump input and set the appropriate speed and state for jumping.
      */
     handleJumpInput() {
+        if (this.isDead()) {
+            return;
+        }
         if (this.world.keyboard.UP_PRESSED) {
             this.jump();
             this.world.keyboard.UP_PRESSED = false;
@@ -140,6 +150,10 @@ class Character extends MoveableObject {
      * @returns 
      */
     applyGravity() {
+        if (this.isDead()) {
+            this.fallAfterDeath();
+            return;
+        }
         if (!this.isJumping) {
             return;
         }
@@ -191,8 +205,7 @@ class Character extends MoveableObject {
      */
     updateAnimation(lastAnimation) {
         if (this.isDead()) {
-            this.characterIsDead();
-            this.playAnimation(this.IMAGES_DEAD);
+            this.playDeathAnimation(lastAnimation);
             return 'dead';
         }
         if (this.isHurt()) {
@@ -202,11 +215,37 @@ class Character extends MoveableObject {
     }
 
     /**
-     * Handle the character's death by stopping movement and resetting jumping state.
+     * Play the character's death animation exactly once.
      */
-    characterIsDead(){
-        this.speedY = 0;
+    playDeathAnimation(lastAnimation) {
+        if (lastAnimation !== 'dead' && !this.deathAnimationStarted) {
+            this.currentImage = 0;
+            this.deathAnimationStarted = true;
+        }
+        if (!this.deathAnimationFinished) {
+            this.playDeathAnimationOnce();
+        }
+    }
+
+    /**
+     * Show the death animation one time and keep the last frame visible afterwards.
+     */
+    playDeathAnimationOnce() {
+        const index = Math.min(this.currentImage, this.IMAGES_DEAD.length - 1);
+        const path = this.IMAGES_DEAD[index];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+        this.deathAnimationFinished = this.currentImage >= this.IMAGES_DEAD.length;
+    }
+
+    /**
+     * Let the dead character fall down and out of the canvas without affecting the camera.
+     */
+    fallAfterDeath() {
         this.isJumping = false;
+        this.speedY = 0;
+        this.y += this.deathFallSpeed;
+        this.deathFallSpeed += this.deathFallAcceleration;
     }
 
     /**
