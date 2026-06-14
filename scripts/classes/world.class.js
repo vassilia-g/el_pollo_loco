@@ -11,44 +11,12 @@ class World {
     collectedCoins = 0;
     collectedBottles = 0;
     maxBottles = 5;
-    fullBottleMessageUntil = 0;
     gameWon = false;
     gameLost = false;
     endbossActivated = false;
     winScreenImage = new Image();
     gameOverImage = new Image();
-    healthBar = new StatusBar([
-        "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/0.png",
-        "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/20.png",
-        "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/40.png",
-        "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/60.png",
-        "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/80.png",
-        "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/100.png"
-    ], 10, 10, 100);
-    coinBar = new StatusBar([
-        "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/0.png",
-        "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/20.png",
-        "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/40.png",
-        "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/60.png",
-        "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/80.png",
-        "assets/graphics/7_statusbars/1_statusbar/1_statusbar_coin/orange/100.png"
-    ], 10, 40, 0);
-    bottleBar = new StatusBar([
-        "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/0.png",
-        "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/20.png",
-        "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/40.png",
-        "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/60.png",
-        "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/80.png",
-        "assets/graphics/7_statusbars/1_statusbar/3_statusbar_bottle/orange/100.png"
-    ], 10, 72, 0);
-    endbossBar = new StatusBar([
-        "assets/graphics/7_statusbars/2_statusbar_endboss/orange/orange0.png",
-        "assets/graphics/7_statusbars/2_statusbar_endboss/orange/orange20.png",
-        "assets/graphics/7_statusbars/2_statusbar_endboss/orange/orange40.png",
-        "assets/graphics/7_statusbars/2_statusbar_endboss/orange/orange60.png",
-        "assets/graphics/7_statusbars/2_statusbar_endboss/orange/orange80.png",
-        "assets/graphics/7_statusbars/2_statusbar_endboss/orange/orange100.png"
-    ], 750, 10, 100);
+    statusBars = new StatusBars();
     
 
     /**x
@@ -156,7 +124,7 @@ class World {
         }
         if (!this.activeEnemyCollisions.has(chicken)) {
             this.character.hit();
-            this.healthBar.setPercentage(this.character.health);
+            this.statusBars.setHealth(this.character.health);
         }
         this.activeEnemyCollisions.add(chicken);
     }
@@ -188,7 +156,7 @@ class World {
         coin.collected = true;
         coin.fadeOut();
         this.collectedCoins++;
-        this.coinBar.setPercentage(this.getCollectionPercentage(this.collectedCoins, this.level.coins.length));
+        this.statusBars.setCoins(this.collectedCoins, this.level.coins.length);
     }
 
     /**
@@ -222,7 +190,7 @@ class World {
      */
     showFullBottleMessage() {
         if (this.collectedBottles === this.maxBottles) {
-            this.fullBottleMessageUntil = Date.now() + 3000;
+            this.statusBars.showFullBottleMessage();
         }
     }
 
@@ -279,7 +247,7 @@ class World {
         }
         if (enemy instanceof Endboss) {
             enemy.hit();
-            this.endbossBar.setPercentage(enemy.health);
+            this.statusBars.setEndbossHealth(enemy.health);
         }
         bottle.splash();
     }
@@ -288,17 +256,7 @@ class World {
      * Update the bottle bar from the current inventory count.
      */
     updateBottleBar() {
-        this.bottleBar.setPercentage(this.getCollectionPercentage(this.collectedBottles, this.maxBottles));
-    }
-
-    /**
-     * Calculate collected objects as a percentage of all objects of the same type.
-     * @param {number} collected - Amount already collected
-     * @param {number} total - Total available amount
-     * @returns {number} Collection percentage
-     */
-    getCollectionPercentage(collected, total) {
-        return total === 0 ? 0 : (collected / total) * 100;
+        this.statusBars.setBottles(this.collectedBottles, this.maxBottles);
     }
 
     /**
@@ -317,7 +275,7 @@ class World {
         this.addObjectsToMap(this.level.chicken);
         this.ctx.translate(-this.camera_x, 0);
         this.checkEndbossActivation();
-        this.addStatusBarsToMap();
+        this.statusBars.draw(this.ctx, this);
         this.drawEndScreen();
         requestAnimationFrame(() => this.draw());
     }
@@ -347,37 +305,6 @@ class World {
         if (this.gameWon) {
             this.ctx.drawImage(this.winScreenImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
         }
-    }
-
-    /**
-     * Draw the fixed canvas UI independent of the camera.
-     */
-    addStatusBarsToMap() {
-        if (this.gameWon || this.gameLost) {
-            return;
-        }
-        this.addToMap(this.healthBar);
-        this.addToMap(this.coinBar);
-        this.addToMap(this.bottleBar);
-        this.drawFullBottleMessage();
-        if (this.endbossActivated) {
-            this.addToMap(this.endbossBar);
-        }
-    }
-
-    /**
-     * Draw the blinking full bottle message below the bottle status bar.
-     */
-    drawFullBottleMessage() {
-        if (Date.now() > this.fullBottleMessageUntil) {
-            return;
-        }
-        this.ctx.save();
-        this.ctx.font = "bold 20px Arial";
-        this.ctx.textAlign = "center";
-        this.ctx.fillStyle = Math.floor(Date.now() / 250) % 2 === 0 ? "red" : "white";
-        this.ctx.fillText("VOLL!", this.bottleBar.x + this.bottleBar.width / 2, this.bottleBar.y + this.bottleBar.height + 24);
-        this.ctx.restore();
     }
 
     /**
