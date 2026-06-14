@@ -14,6 +14,7 @@ class World {
     fullBottleMessageUntil = 0;
     gameWon = false;
     gameLost = false;
+    endbossActivated = false;
     winScreenImage = new Image();
     gameOverImage = new Image();
     healthBar = new StatusBar([
@@ -104,7 +105,7 @@ class World {
             this.keyboard.block();
             return;
         }
-        const endboss = this.level.chicken.find(enemy => enemy instanceof Endboss);
+        const endboss = this.getEndboss();
         if (endboss && endboss.isDead()) {
             this.gameWon = true;
             this.keyboard.block();
@@ -112,9 +113,20 @@ class World {
     }
 
     /**
+     * Find the endboss in the current level.
+     * @returns {Endboss|undefined} The level endboss
+     */
+    getEndboss() {
+        return this.level.chicken.find(enemy => enemy instanceof Endboss);
+    }
+
+    /**
      * Check for collisions between the character and chickens. If a collision is detected, handle it accordingly (e.g., damage the character or kill the chicken).
      */
     checkChickenCollisions() {
+        if (this.isGameOver()) {
+            return;
+        }
         this.level.chicken.forEach(chicken => this.handleChickenCollision(chicken));
     }
 
@@ -139,11 +151,22 @@ class World {
      * @param {Chicken} chicken - The chicken that is colliding with the character
      */
     damageCharacterOnce(chicken) {
+        if (this.isGameOver()) {
+            return;
+        }
         if (!this.activeEnemyCollisions.has(chicken)) {
             this.character.hit();
             this.healthBar.setPercentage(this.character.health);
         }
         this.activeEnemyCollisions.add(chicken);
+    }
+
+    /**
+     * Check whether the game already reached a win or lose state.
+     * @returns {boolean} True once an end screen is active
+     */
+    isGameOver() {
+        return this.gameWon || this.gameLost;
     }
 
     /**
@@ -293,9 +316,24 @@ class World {
         this.addObjectsToMap(this.throwableSalsas);
         this.addObjectsToMap(this.level.chicken);
         this.ctx.translate(-this.camera_x, 0);
+        this.checkEndbossActivation();
         this.addStatusBarsToMap();
         this.drawEndScreen();
         requestAnimationFrame(() => this.draw());
+    }
+
+    /**
+     * Activate the endboss once he reaches the visible area with 100px spacing.
+     */
+    checkEndbossActivation() {
+        const endboss = this.getEndboss();
+        if (!endboss || this.endbossActivated || endboss.isDead()) {
+            return;
+        }
+        if (endboss.x + this.camera_x <= CANVAS.width - 100) {
+            this.endbossActivated = true;
+            endboss.startAlert();
+        }
     }
 
     /**
@@ -307,7 +345,7 @@ class World {
             return;
         }
         if (this.gameWon) {
-            this.ctx.drawImage(this.winScreenImage, (CANVAS.width - 500) / 2, (CANVAS.height - 650) / 2, 500, 650);
+            this.ctx.drawImage(this.winScreenImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
         }
     }
 
@@ -315,11 +353,16 @@ class World {
      * Draw the fixed canvas UI independent of the camera.
      */
     addStatusBarsToMap() {
+        if (this.gameWon || this.gameLost) {
+            return;
+        }
         this.addToMap(this.healthBar);
         this.addToMap(this.coinBar);
         this.addToMap(this.bottleBar);
         this.drawFullBottleMessage();
-        this.addToMap(this.endbossBar);
+        if (this.endbossActivated) {
+            this.addToMap(this.endbossBar);
+        }
     }
 
     /**

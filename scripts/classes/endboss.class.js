@@ -2,6 +2,8 @@
  * Class for the endboss character.
  */
 class Endboss extends MoveableObject {
+    animationState = "walking";
+    activeAnimation = "";
     IMAGES_WALKING = [
         "assets/graphics/4_enemie_boss_chicken/1_walk/G1.png",
         "assets/graphics/4_enemie_boss_chicken/1_walk/G2.png",
@@ -68,11 +70,13 @@ class Endboss extends MoveableObject {
     }
 
     /**
-     * Play walking frames only while the Endboss is alive.
+     * Start the endboss encounter with the alert animation.
      */
-    updateAnimation() {
-        if (!this.isDead()) {
-            this.playAnimation(this.IMAGES_WALKING);
+    startAlert() {
+        if (this.animationState === "walking") {
+            this.animationState = "alert";
+            this.currentImage = 0;
+            this.activeAnimation = "alert";
         }
     }
 
@@ -80,24 +84,50 @@ class Endboss extends MoveableObject {
      * Update the boss animation based on its current state.
      */
     updateAnimation() {
-        this.playAnimation(this.IMAGES_WALKING);
         if (this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
+            this.playStateAnimation(this.IMAGES_DEAD, "dead");
             return;
         }
         if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
+            this.playStateAnimation(this.IMAGES_HURT, "hurt");
             this.hurt = this.currentImage < this.IMAGES_HURT.length;
             return;
         }
-        // if (this.isAlert()) {
-        //     this.playAnimation(this.IMAGES_ALERT);
-        //     return;
-        // }
-        // if (this.isAttacking()) {
-        //     this.playAnimation(this.IMAGES_ATTACK);
-        //     return;
-        // }
+        if (this.animationState === "alert") {
+            this.playAlertAnimation();
+            return;
+        }
+        if (this.animationState === "attack") {
+            this.playStateAnimation(this.IMAGES_ATTACK, "attack");
+            return;
+        }
+        this.playStateAnimation(this.IMAGES_WALKING, "walking");
+    }
+
+    /**
+     * Play the alert animation once and then switch to attack.
+     */
+    playAlertAnimation() {
+        this.playStateAnimation(this.IMAGES_ALERT, "alert");
+        if (this.currentImage >= this.IMAGES_ALERT.length) {
+            this.speed = 0;
+            this.animationState = "attack";
+            this.currentImage = 0;
+            this.activeAnimation = "attack";
+        }
+    }
+
+    /**
+     * Play an animation and reset the frame counter when the animation changes.
+     * @param {string[]} images - Animation frames
+     * @param {string} state - Current animation state name
+     */
+    playStateAnimation(images, state) {
+        if (this.activeAnimation !== state) {
+            this.currentImage = 0;
+            this.activeAnimation = state;
+        }
+        this.playAnimation(images);
     }
 
     /**
