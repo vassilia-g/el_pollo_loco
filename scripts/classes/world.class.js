@@ -12,6 +12,10 @@ class World {
     collectedBottles = 0;
     maxBottles = 5;
     fullBottleMessageUntil = 0;
+    gameWon = false;
+    gameLost = false;
+    winScreenImage = new Image();
+    gameOverImage = new Image();
     healthBar = new StatusBar([
         "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/0.png",
         "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/20.png",
@@ -54,9 +58,18 @@ class World {
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
         this.keyboard = keyboard;
+        this.loadEndScreens();
         this.connectCharacterToWorld();
         this.draw();
         this.checkCollisions();
+    }
+
+    /**
+     * Preload the images that are drawn after winning or losing.
+     */
+    loadEndScreens() {
+        this.winScreenImage.src = "assets/graphics/You won, you lost/You Win A.png";
+        this.gameOverImage.src = "assets/graphics/You won, you lost/Game Over.png";
     }
 
     /**
@@ -87,11 +100,13 @@ class World {
      */
     checkGameEnd() {
         if (this.character.isDead()) {
+            this.gameLost = true;
             this.keyboard.block();
             return;
         }
         const endboss = this.level.chicken.find(enemy => enemy instanceof Endboss);
         if (endboss && endboss.isDead()) {
+            this.gameWon = true;
             this.keyboard.block();
         }
     }
@@ -279,7 +294,21 @@ class World {
         this.addObjectsToMap(this.level.chicken);
         this.ctx.translate(-this.camera_x, 0);
         this.addStatusBarsToMap();
+        this.drawEndScreen();
         requestAnimationFrame(() => this.draw());
+    }
+
+    /**
+     * Draw the matching end screen once the game is won or lost.
+     */
+    drawEndScreen() {
+        if (this.gameLost) {
+            this.ctx.drawImage(this.gameOverImage, (CANVAS.width - 600) / 2, (CANVAS.height - 400) / 2, 600, 400);
+            return;
+        }
+        if (this.gameWon) {
+            this.ctx.drawImage(this.winScreenImage, (CANVAS.width - 500) / 2, (CANVAS.height - 650) / 2, 500, 650);
+        }
     }
 
     /**
