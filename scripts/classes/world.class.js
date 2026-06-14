@@ -11,6 +11,7 @@ class World {
     collectedCoins = 0;
     collectedBottles = 0;
     maxBottles = 5;
+    fullBottleMessageUntil = 0;
     healthBar = new StatusBar([
         "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/0.png",
         "assets/graphics/7_statusbars/1_statusbar/2_statusbar_health/orange/20.png",
@@ -175,6 +176,16 @@ class World {
         salsa.fadeOut();
         this.collectedBottles++;
         this.updateBottleBar();
+        this.showFullBottleMessage();
+    }
+
+    /**
+     * Show a short blinking message when the bottle inventory is full.
+     */
+    showFullBottleMessage() {
+        if (this.collectedBottles === this.maxBottles) {
+            this.fullBottleMessageUntil = Date.now() + 3000;
+        }
     }
 
     /**
@@ -278,7 +289,23 @@ class World {
         this.addToMap(this.healthBar);
         this.addToMap(this.coinBar);
         this.addToMap(this.bottleBar);
+        this.drawFullBottleMessage();
         this.addToMap(this.endbossBar);
+    }
+
+    /**
+     * Draw the blinking full bottle message below the bottle status bar.
+     */
+    drawFullBottleMessage() {
+        if (Date.now() > this.fullBottleMessageUntil) {
+            return;
+        }
+        this.ctx.save();
+        this.ctx.font = "bold 20px Arial";
+        this.ctx.textAlign = "center";
+        this.ctx.fillStyle = Math.floor(Date.now() / 250) % 2 === 0 ? "red" : "white";
+        this.ctx.fillText("VOLL!", this.bottleBar.x + this.bottleBar.width / 2, this.bottleBar.y + this.bottleBar.height + 24);
+        this.ctx.restore();
     }
 
     /**
