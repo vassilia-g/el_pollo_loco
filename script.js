@@ -31,8 +31,11 @@ function startGameOnPlayClick(event) {
     CANVAS.style.cursor = "default";
     startGame();
     CANVAS.addEventListener("click", restartGameOnClick);
+    CANVAS.addEventListener("click", goHomeOnClick);
     CANVAS.addEventListener("mousemove", updateRestartButtonHover);
+    CANVAS.addEventListener("mousemove", updateHomeButtonHover);
     CANVAS.addEventListener("mouseleave", clearRestartButtonHover);
+    CANVAS.addEventListener("mouseleave", clearHomeButtonHover);
 }
 
 /**
@@ -72,6 +75,17 @@ function restartGameOnClick(event) {
 }
 
 /**
+ * Reload the page from the win screen to return home.
+ * @param {MouseEvent} event - The click event
+ */
+function goHomeOnClick(event) {
+    if (!world || !world.gameWon || !gameScreens.isHomeButtonClicked(event)) {
+        return;
+    }
+    location.reload();
+}
+
+/**
  * Update the restart button hover state on the game over screen.
  * @param {MouseEvent} event - The mouse move event
  */
@@ -83,6 +97,17 @@ function updateRestartButtonHover(event) {
 }
 
 /**
+ * Update the home button hover state on the win screen.
+ * @param {MouseEvent} event - The mouse move event
+ */
+function updateHomeButtonHover(event) {
+    if (!world || !world.gameWon) {
+        return;
+    }
+    gameScreens.updateHomeButtonHover(event, world.ctx);
+}
+
+/**
  * Clear the restart button hover state when the cursor leaves the canvas.
  */
 function clearRestartButtonHover() {
@@ -90,6 +115,16 @@ function clearRestartButtonHover() {
         return;
     }
     gameScreens.clearRestartButtonHover(world.ctx);
+}
+
+/**
+ * Clear the home button hover state when the cursor leaves the canvas.
+ */
+function clearHomeButtonHover() {
+    if (!world || !world.gameWon) {
+        return;
+    }
+    gameScreens.clearHomeButtonHover(world.ctx);
 }
 
 /**

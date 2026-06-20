@@ -61,12 +61,11 @@ class MoveableObject {
     }
 
     /**
-     * Reduce the health of the object by the damage value and log the current health to the console.
+     * Reduce the health of the object by the damage value.
     */
     hit() {
         this.health = Math.max(this.health - this.damage, 0);
         this.hurt = true;
-        console.log("Object health: " + this.health);
     }
 
     /**

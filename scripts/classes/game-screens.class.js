@@ -7,6 +7,7 @@ class GameScreens {
     gameOverImage = new Image();
     isPlayButtonHovered = false;
     isRestartButtonHovered = false;
+    isHomeButtonHovered = false;
     playButton = {
         x: 450,
         y: 470,
@@ -17,6 +18,12 @@ class GameScreens {
         x: 380,
         y: 430,
         width: 200,
+        height: 58
+    };
+    homeButton = {
+        x: 405,
+        y: 430,
+        width: 150,
         height: 58
     };
 
@@ -136,6 +143,7 @@ class GameScreens {
         if (gameWon) {
             this.drawWinOverlay(ctx);
             ctx.drawImage(this.winImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
+            this.drawHomeButton(ctx);
         }
     }
 
@@ -209,6 +217,67 @@ class GameScreens {
                position.x <= this.restartButton.x + this.restartButton.width &&
                position.y >= this.restartButton.y &&
                position.y <= this.restartButton.y + this.restartButton.height;
+    }
+
+    /**
+     * Draw the home button on the win screen.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    drawHomeButton(ctx) {
+        const button = this.homeButton;
+        ctx.save();
+        ctx.fillStyle = this.isHomeButtonHovered ? "#ffe066" : "#ffcc01";
+        ctx.strokeStyle = this.isHomeButtonHovered ? "#ffffff" : "#8b2d12";
+        ctx.lineWidth = 3;
+        ctx.fillRect(button.x, button.y, button.width, button.height);
+        ctx.strokeRect(button.x, button.y, button.width, button.height);
+        ctx.fillStyle = "#8b2d12";
+        ctx.font = "32px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("HOME", button.x + button.width / 2, button.y + button.height / 2);
+        ctx.restore();
+    }
+
+    /**
+     * Update the hover state of the home button and redraw when it changes.
+     * @param {MouseEvent} event - The mouse move event
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    updateHomeButtonHover(event, ctx) {
+        const isHovered = this.isHomeButtonClicked(event);
+        if (this.isHomeButtonHovered === isHovered) {
+            return;
+        }
+        this.isHomeButtonHovered = isHovered;
+        this.canvas.style.cursor = isHovered ? "pointer" : "default";
+        this.drawEndScreen(ctx, true, false);
+    }
+
+    /**
+     * Remove the home button hover state.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    clearHomeButtonHover(ctx) {
+        if (!this.isHomeButtonHovered) {
+            return;
+        }
+        this.isHomeButtonHovered = false;
+        this.canvas.style.cursor = "default";
+        this.drawEndScreen(ctx, true, false);
+    }
+
+    /**
+     * Check whether a canvas click is inside the home button.
+     * @param {MouseEvent} event - The click event
+     * @returns {boolean} True when the home button was clicked
+     */
+    isHomeButtonClicked(event) {
+        const position = this.getCanvasClickPosition(event);
+        return position.x >= this.homeButton.x &&
+               position.x <= this.homeButton.x + this.homeButton.width &&
+               position.y >= this.homeButton.y &&
+               position.y <= this.homeButton.y + this.homeButton.height;
     }
 
     /**
