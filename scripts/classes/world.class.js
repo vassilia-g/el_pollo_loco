@@ -15,6 +15,9 @@ class World {
     gameLost = false;
     endbossActivated = false;
     statusBars = new StatusBars();
+    collisionIntervals = [];
+    animationFrameId;
+    stopped = false;
     
 
     /**x
@@ -43,16 +46,16 @@ class World {
      * Check for collisions between the character and other game objects (chickens, coins, salsa) at regular intervals.
      */
     checkCollisions() {
-        setInterval(() => this.checkChickenCollisions(), 1000 / 60);
-        setInterval(() => {
+        this.collisionIntervals.push(setInterval(() => this.checkChickenCollisions(), 1000 / 60));
+        this.collisionIntervals.push(setInterval(() => {
             this.checkCoinCollisions();
             this.checkSalsaCollisions();
-        }, 100);
-        setInterval(() => {
+        }, 100));
+        this.collisionIntervals.push(setInterval(() => {
             this.checkThrowInput();
             this.checkThrowableCollisions();
             this.checkGameEnd();
-        }, 1000 / 60);
+        }, 1000 / 60));
     }
 
     /**
@@ -268,6 +271,9 @@ class World {
      * Draw all game objects on the canvas and request the next animation frame.
      */
     draw() {
+        if (this.stopped) {
+            return;
+        }
         this.ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
         this.camera_x = Math.round(this.camera_x_float || this.camera_x);
         this.ctx.translate(this.camera_x, 0);
@@ -282,7 +288,16 @@ class World {
         this.checkEndbossActivation();
         this.statusBars.draw(this.ctx, this);
         this.drawEndScreen();
-        requestAnimationFrame(() => this.draw());
+        this.animationFrameId = requestAnimationFrame(() => this.draw());
+    }
+
+    /**
+     * Stop this world before starting a fresh one.
+     */
+    destroy() {
+        this.stopped = true;
+        this.collisionIntervals.forEach(interval => clearInterval(interval));
+        cancelAnimationFrame(this.animationFrameId);
     }
 
     /**

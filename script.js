@@ -29,6 +29,16 @@ function startGameOnPlayClick(event) {
     CANVAS.removeEventListener("mousemove", updatePlayButtonHover);
     CANVAS.removeEventListener("mouseleave", clearPlayButtonHover);
     CANVAS.style.cursor = "default";
+    startGame();
+    CANVAS.addEventListener("click", restartGameOnClick);
+    CANVAS.addEventListener("mousemove", updateRestartButtonHover);
+    CANVAS.addEventListener("mouseleave", clearRestartButtonHover);
+}
+
+/**
+ * Start a fresh game world.
+ */
+function startGame() {
     KEYBOARD = new Keyboard();
     world = new World(CANVAS, KEYBOARD, gameScreens);
 }
@@ -46,6 +56,40 @@ function updatePlayButtonHover(event) {
  */
 function clearPlayButtonHover() {
     gameScreens.clearPlayButtonHover();
+}
+
+/**
+ * Restart the game from the game over screen without reloading the page.
+ * @param {MouseEvent} event - The click event
+ */
+function restartGameOnClick(event) {
+    if (!world || !world.gameLost || !gameScreens.isRestartButtonClicked(event)) {
+        return;
+    }
+    world.destroy();
+    gameScreens.clearRestartButtonHover(world.ctx);
+    startGame();
+}
+
+/**
+ * Update the restart button hover state on the game over screen.
+ * @param {MouseEvent} event - The mouse move event
+ */
+function updateRestartButtonHover(event) {
+    if (!world || !world.gameLost) {
+        return;
+    }
+    gameScreens.updateRestartButtonHover(event, world.ctx);
+}
+
+/**
+ * Clear the restart button hover state when the cursor leaves the canvas.
+ */
+function clearRestartButtonHover() {
+    if (!world || !world.gameLost) {
+        return;
+    }
+    gameScreens.clearRestartButtonHover(world.ctx);
 }
 
 /**

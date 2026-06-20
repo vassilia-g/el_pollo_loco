@@ -6,11 +6,18 @@ class GameScreens {
     winImage = new Image();
     gameOverImage = new Image();
     isPlayButtonHovered = false;
+    isRestartButtonHovered = false;
     playButton = {
         x: 450,
         y: 470,
         width: 90,
         height: 64
+    };
+    restartButton = {
+        x: 380,
+        y: 430,
+        width: 200,
+        height: 58
     };
 
     /**
@@ -123,6 +130,7 @@ class GameScreens {
         if (gameLost) {
             this.drawOverlay(ctx);
             ctx.drawImage(this.gameOverImage, (CANVAS.width - 600) / 2, (CANVAS.height - 400) / 2, 600, 400);
+            this.drawRestartButton(ctx);
             return;
         }
         if (gameWon) {
@@ -140,6 +148,67 @@ class GameScreens {
         ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
         ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
         ctx.restore();
+    }
+
+    /**
+     * Draw the restart button on the game over screen.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    drawRestartButton(ctx) {
+        const button = this.restartButton;
+        ctx.save();
+        ctx.fillStyle = this.isRestartButtonHovered ? "#ffe066" : "#ffcc01";
+        ctx.strokeStyle = this.isRestartButtonHovered ? "#ffffff" : "#8b2d12";
+        ctx.lineWidth = 3;
+        ctx.fillRect(button.x, button.y, button.width, button.height);
+        ctx.strokeRect(button.x, button.y, button.width, button.height);
+        ctx.fillStyle = "#8b2d12";
+        ctx.font = "32px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("RESTART", button.x + button.width / 2, button.y + button.height / 2);
+        ctx.restore();
+    }
+
+    /**
+     * Update the hover state of the restart button and redraw when it changes.
+     * @param {MouseEvent} event - The mouse move event
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    updateRestartButtonHover(event, ctx) {
+        const isHovered = this.isRestartButtonClicked(event);
+        if (this.isRestartButtonHovered === isHovered) {
+            return;
+        }
+        this.isRestartButtonHovered = isHovered;
+        this.canvas.style.cursor = isHovered ? "pointer" : "default";
+        this.drawEndScreen(ctx, false, true);
+    }
+
+    /**
+     * Remove the restart button hover state.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    clearRestartButtonHover(ctx) {
+        if (!this.isRestartButtonHovered) {
+            return;
+        }
+        this.isRestartButtonHovered = false;
+        this.canvas.style.cursor = "default";
+        this.drawEndScreen(ctx, false, true);
+    }
+
+    /**
+     * Check whether a canvas click is inside the restart button.
+     * @param {MouseEvent} event - The click event
+     * @returns {boolean} True when the restart button was clicked
+     */
+    isRestartButtonClicked(event) {
+        const position = this.getCanvasClickPosition(event);
+        return position.x >= this.restartButton.x &&
+               position.x <= this.restartButton.x + this.restartButton.width &&
+               position.y >= this.restartButton.y &&
+               position.y <= this.restartButton.y + this.restartButton.height;
     }
 
     /**
