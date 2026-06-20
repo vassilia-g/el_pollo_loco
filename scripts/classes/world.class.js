@@ -248,8 +248,22 @@ class World {
         if (enemy instanceof Endboss) {
             enemy.hit();
             this.statusBars.setEndbossHealth(enemy.health);
+            this.alignBottleSplashWithEndboss(bottle, enemy);
         }
         bottle.splash();
+    }
+
+    /**
+     * Move the splash animation closer to the visible side of the endboss.
+     * @param {Salsa} bottle - The bottle that hit the endboss
+     * @param {Endboss} endboss - The hit endboss
+     */
+    alignBottleSplashWithEndboss(bottle, endboss) {
+        if (bottle.speedX > 0) {
+            bottle.x = endboss.x + 20;
+            return;
+        }
+        bottle.x = endboss.x + endboss.width - bottle.width - 20;
     }
 
     /**
@@ -271,8 +285,8 @@ class World {
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.salsa);
         this.addToMap(this.character);
-        this.addObjectsToMap(this.throwableSalsas);
         this.addObjectsToMap(this.level.chicken);
+        this.addObjectsToMap(this.throwableSalsas);
         this.ctx.translate(-this.camera_x, 0);
         this.checkEndbossActivation();
         this.statusBars.draw(this.ctx, this);
