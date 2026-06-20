@@ -1,15 +1,51 @@
 const CANVAS = document.querySelector("canvas");
 let world;
+let gameScreens;
 let KEYBOARD = new Keyboard();
 
 CANVAS.width = 960;
 CANVAS.height = 540;
 
 /**
- * This function initializes the game by creating a new instance of the World class and passing the canvas and keyboard instances to it.
+ * Initialize the start screen.
  */
 function init() {
-    world = new World(CANVAS, KEYBOARD);
+    gameScreens = new GameScreens(CANVAS);
+    gameScreens.drawStartScreen();
+    CANVAS.addEventListener("click", startGameOnPlayClick);
+    CANVAS.addEventListener("mousemove", updatePlayButtonHover);
+    CANVAS.addEventListener("mouseleave", clearPlayButtonHover);
+}
+
+/**
+ * Start the game when the play button is clicked.
+ * @param {MouseEvent} event - The click event
+ */
+function startGameOnPlayClick(event) {
+    if (!gameScreens.isPlayButtonClicked(event)) {
+        return;
+    }
+    CANVAS.removeEventListener("click", startGameOnPlayClick);
+    CANVAS.removeEventListener("mousemove", updatePlayButtonHover);
+    CANVAS.removeEventListener("mouseleave", clearPlayButtonHover);
+    CANVAS.style.cursor = "default";
+    KEYBOARD = new Keyboard();
+    world = new World(CANVAS, KEYBOARD, gameScreens);
+}
+
+/**
+ * Update the play button hover state.
+ * @param {MouseEvent} event - The mouse move event
+ */
+function updatePlayButtonHover(event) {
+    gameScreens.updatePlayButtonHover(event);
+}
+
+/**
+ * Clear the play button hover state when the cursor leaves the canvas.
+ */
+function clearPlayButtonHover() {
+    gameScreens.clearPlayButtonHover();
 }
 
 /**

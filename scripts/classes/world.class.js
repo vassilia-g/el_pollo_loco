@@ -14,8 +14,6 @@ class World {
     gameWon = false;
     gameLost = false;
     endbossActivated = false;
-    winScreenImage = new Image();
-    gameOverImage = new Image();
     statusBars = new StatusBars();
     
 
@@ -23,22 +21,15 @@ class World {
      * The constructor of the World class. It initializes the canvas context and starts the drawing loop.
      * @param {HTMLCanvasElement} canvas - The canvas element where the game will be drawn
      * @param {Keyboard} keyboard - The keyboard instance to handle input
+     * @param {GameScreens} gameScreens - The helper that draws start and end screens
      */
-    constructor(canvas, keyboard) {
+    constructor(canvas, keyboard, gameScreens) {
         this.ctx = canvas.getContext("2d");
         this.keyboard = keyboard;
-        this.loadEndScreens();
+        this.gameScreens = gameScreens;
         this.connectCharacterToWorld();
         this.draw();
         this.checkCollisions();
-    }
-
-    /**
-     * Preload the images that are drawn after winning or losing.
-     */
-    loadEndScreens() {
-        this.winScreenImage.src = "assets/graphics/You won, you lost/You Win A.png";
-        this.gameOverImage.src = "assets/graphics/You won, you lost/Game Over.png";
     }
 
     /**
@@ -312,13 +303,7 @@ class World {
      * Draw the matching end screen once the game is won or lost.
      */
     drawEndScreen() {
-        if (this.gameLost) {
-            this.ctx.drawImage(this.gameOverImage, (CANVAS.width - 600) / 2, (CANVAS.height - 400) / 2, 600, 400);
-            return;
-        }
-        if (this.gameWon) {
-            this.ctx.drawImage(this.winScreenImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
-        }
+        this.gameScreens.drawEndScreen(this.ctx, this.gameWon, this.gameLost);
     }
 
     /**
