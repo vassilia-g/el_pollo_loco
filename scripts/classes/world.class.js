@@ -3,7 +3,7 @@
  */
 class World {
     character = new Character();
-    level = level1;
+    level = createLevel1();
     camera_x_float = 0;
     camera_x = 0;
     activeEnemyCollisions = new Set();

@@ -126,6 +126,7 @@ class GameScreens {
             return;
         }
         if (gameWon) {
+            this.drawWinOverlay(ctx);
             ctx.drawImage(this.winImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
         }
     }
@@ -137,6 +138,19 @@ class GameScreens {
     drawOverlay(ctx) {
         ctx.save();
         ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+        ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
+        ctx.restore();
+    }
+
+    /**
+     * Draw a warm transparent overlay behind the win screen.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    drawWinOverlay(ctx) {
+        ctx.save();
+        ctx.fillStyle = "rgba(255, 204, 1, 0.22)";
+        ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
+        ctx.fillStyle = "rgba(255, 112, 0, 0.16)";
         ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
         ctx.restore();
     }
