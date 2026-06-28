@@ -23,3 +23,104 @@ canvas {
     background: black;
 }
 
+.rotate-device-message {
+    display: none;
+}
+
+.mobile-controls {
+    display: none;
+}
+
+@media (max-width: 900px) and (orientation: portrait) {
+    canvas {
+        visibility: hidden;
+    }
+
+    .rotate-device-message {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        color: #2b1600;
+        background-color: #ffcc01;
+        background-image: url('assets/background/background.png');
+        background-repeat: repeat;
+        background-size: 400px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .rotate-device-message p {
+        margin: 0;
+    }
+
+    .rotate-device-icon {
+        font-size: 64px;
+        line-height: 1;
+    }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+    .mobile-controls {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 0 34px 24px;
+        pointer-events: none;
+    }
+
+    .mobile-joystick,
+    .mobile-throw-button {
+        pointer-events: auto;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .mobile-joystick {
+        position: relative;
+        width: 104px;
+        height: 104px;
+        border: 3px solid rgba(255, 255, 255, 0.85);
+        border-radius: 50%;
+        background: rgba(43, 22, 0, 0.35);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .mobile-joystick-knob {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: rgba(255, 204, 1, 0.95);
+        border: 2px solid rgba(43, 22, 0, 0.7);
+        transform: translate(-50%, -50%);
+        transition: transform 80ms ease;
+    }
+
+    .mobile-throw-button {
+        width: 76px;
+        height: 76px;
+        border: 3px solid rgba(255, 255, 255, 0.85);
+        border-radius: 50%;
+        background: rgba(177, 39, 0, 0.78);
+        color: white;
+        font-size: 34px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .mobile-throw-button:active {
+        transform: scale(0.95);
+    }
+}

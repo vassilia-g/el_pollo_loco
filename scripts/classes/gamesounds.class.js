@@ -12,20 +12,42 @@ class GameSounds {
     volume = 0.5;
 
     constructor() {
-        [this.coin, this.bottle, this.splash].forEach(sound => {
-            sound.volume = this.volume;
-        });
+        this.getAllSounds().forEach(sound => sound.volume = this.volume);
+    }
+
+    getAllSounds() {
+        return [
+            this.character,
+            this.steps,
+            this.jump,
+            this.chicken,
+            this.endboss,
+            this.coin,
+            this.bottle,
+            this.splash
+        ];
     }
 
     play(sound) {
         if (this.muted) return;
 
         sound.currentTime = 0;
-        sound.play();
+        const playPromise = sound.play();
+        if (playPromise) {
+            playPromise.catch(() => {});
+        }
+    }
+
+    playJump() {
+        this.play(this.jump);
     }
 
     playCoin() {
         this.play(this.coin);
+    }
+
+    playBottleCollect() {
+        this.play(this.bottle);
     }
 
     playBottleThrow() {
@@ -34,6 +56,19 @@ class GameSounds {
 
     playSplash() {
         this.play(this.splash);
+    }
+
+    playChicken() {
+        this.play(this.chicken);
+    }
+
+    playEndboss() {
+        this.play(this.endboss);
+    }
+
+    setVolume(volume) {
+        this.volume = Math.min(Math.max(volume, 0), 1);
+        this.getAllSounds().forEach(sound => sound.volume = this.volume);
     }
 
     toggleMute() {

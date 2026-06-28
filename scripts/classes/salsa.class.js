@@ -4,6 +4,7 @@ class Salsa extends MoveableObject {
     y = 412;
     isThrown = false;
     splashing = false;
+    sounds;
     throwInterval;
     animationInterval;
     IMAGES_SALSA_ROTATION = [
@@ -82,6 +83,7 @@ class Salsa extends MoveableObject {
         this.speedX = 0;
         clearInterval(this.throwInterval);
         clearInterval(this.animationInterval);
+        this.sounds?.playSplash();
         this.playSplashAnimation();
     }
 

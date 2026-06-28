@@ -15,6 +15,7 @@ class World {
     gameLost = false;
     endbossActivated = false;
     statusBars = new StatusBars();
+    sounds = new GameSounds();
     collisionIntervals = [];
     animationFrameId;
     stopped = false;
@@ -103,6 +104,7 @@ class World {
         }
         if (chicken instanceof Chicken && this.character.isJumpingOn(chicken)) {
             chicken.die();
+            this.sounds.playChicken();
             return;
         }
         this.damageCharacterOnce(chicken);
@@ -151,6 +153,7 @@ class World {
         coin.fadeOut();
         this.collectedCoins++;
         this.statusBars.setCoins(this.collectedCoins, this.level.coins.length);
+        this.sounds.playCoin();
     }
 
     /**
@@ -177,6 +180,7 @@ class World {
         this.collectedBottles++;
         this.updateBottleBar();
         this.showFullBottleMessage();
+        this.sounds.playBottleCollect();
     }
 
     /**
@@ -208,11 +212,13 @@ class World {
         const direction = this.character.otherDirection ? -1 : 1;
         const x = this.character.x + (direction === 1 ? this.character.width - 20 : -20);
         const bottle = new Salsa("assets/graphics/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png", x);
+        bottle.sounds = this.sounds;
         bottle.y = this.character.y + 80;
         bottle.throw(direction);
         this.throwableSalsas.push(bottle);
         this.collectedBottles--;
         this.updateBottleBar();
+        this.sounds.playBottleThrow();
     }
 
     /**
@@ -311,6 +317,7 @@ class World {
         if (endboss.x + this.camera_x <= CANVAS.width - 100) {
             this.endbossActivated = true;
             endboss.startAlert();
+            this.sounds.playEndboss();
         }
     }
 
