@@ -13,12 +13,19 @@ class GameSounds {
     volume = 0.5;
     backgroundVolume = 0.25;
 
+    /**
+     * Initializes the GameSounds class by setting the volume for all sounds and configuring the background music.
+     */
     constructor() {
         this.getAllSounds().forEach(sound => sound.volume = this.volume);
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = this.backgroundVolume;
     }
 
+    /**
+     * Returns an array of all sound objects used in the game.
+     * @returns {Audio[]} An array containing all sound objects.
+     */
     getAllSounds() {
         return [
             this.character,
@@ -33,6 +40,10 @@ class GameSounds {
         ];
     }
 
+    /**
+     * Plays the specified sound if the game is not muted.
+     * @param {Audio} sound - The sound object to be played.
+     */
     play(sound) {
         if (this.muted) return;
 
@@ -43,34 +54,72 @@ class GameSounds {
         }
     }
 
+    /**
+     * Plays the character sound.
+     */
+    playCharacter() {
+        this.play(this.character);
+    }
+
+    /**
+     * Plays the steps sound.
+     */
+    playSteps() {
+        this.play(this.steps);
+    }
+
+    /**
+     * Plays the jump sound.
+     */ 
     playJump() {
         this.play(this.jump);
     }
 
+    /**
+     * Plays the coin sound.
+     */
     playCoin() {
         this.play(this.coin);
     }
 
+    /**
+     * Plays the bottle collect sound.
+     */
     playBottleCollect() {
         this.play(this.bottle);
     }
 
+    /**
+     * Plays the bottle throw sound.
+     */
     playBottleThrow() {
         this.play(this.bottle);
     }
 
+    /**
+     * Plays the splash sound.
+     */
     playSplash() {
         this.play(this.splash);
     }
 
+    /**
+     * Plays the chicken sound.
+     */
     playChicken() {
         this.play(this.chicken);
     }
 
+    /**
+     * Plays the endboss sound.
+     */
     playEndboss() {
         this.play(this.endboss);
     }
 
+    /**
+     * Plays the background music if the game is not muted.
+     */
     playBackgroundMusic() {
         if (this.muted) return;
 
@@ -80,17 +129,27 @@ class GameSounds {
         }
     }
 
+    /**
+     * Stops the background music and resets its playback position.
+     */
     stopBackgroundMusic() {
         this.backgroundMusic.pause();
         this.backgroundMusic.currentTime = 0;
     }
 
+    /**
+     * Sets the volume for all sounds and the background music.
+     * @param {number} volume - The desired volume level (between 0 and 1).
+     */
     setVolume(volume) {
         this.volume = Math.min(Math.max(volume, 0), 1);
         this.getAllSounds().forEach(sound => sound.volume = this.volume);
         this.backgroundMusic.volume = this.backgroundVolume;
     }
 
+    /**
+     * Toggles the mute state of the game sounds.
+     */
     toggleMute() {
         this.muted = !this.muted;
     }

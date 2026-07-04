@@ -11,6 +11,9 @@ class Keyboard {
     SPACE_PRESSED = false;
     blocked = false;
 
+    /**
+     * Initializes the Keyboard class by setting up event listeners for keydown and keyup events.
+     */
     reset() {
         this.LEFT = false;
         this.RIGHT = false;
@@ -21,11 +24,17 @@ class Keyboard {
         this.SPACE_PRESSED = false;
     }
 
+    /**
+     * Blocks the keyboard input and resets the key states.
+     */
     block() {
         this.blocked = true;
         this.reset();
     }
 
+    /**
+     * Unblocks the keyboard input and resets the key states.
+     */
     unblock() {
         this.blocked = false;
         this.reset();
