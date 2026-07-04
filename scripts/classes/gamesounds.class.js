@@ -8,6 +8,7 @@ class GameSounds {
     bottle = new Audio("assets/audio/bottle.mp3");
     splash = new Audio("assets/audio/splash.mp3");
     gameOver = new Audio("assets/audio/game-over.mp3");
+    gameWon = new Audio("assets/audio/game-won.mp3");
     backgroundMusic = new Audio("assets/audio/background/sonican-gypsy-tango-acoustic-folk-loop-469606.mp3");
 
     muted = false;
@@ -38,6 +39,7 @@ class GameSounds {
             this.bottle,
             this.splash,
             this.gameOver,
+            this.gameWon,
             this.backgroundMusic
         ];
     }
@@ -125,6 +127,14 @@ class GameSounds {
     playGameOver() {
         this.stopSoundsExcept(this.gameOver);
         this.play(this.gameOver);
+    }
+
+    /**
+     * Plays the game won sound.
+     */
+    playGameWon() {
+        this.stopSoundsExcept(this.gameWon);
+        this.play(this.gameWon);
     }
 
     /**

@@ -79,6 +79,7 @@ class World {
             this.gameWon = true;
             this.keyboard.block();
             hideMobileControls();
+            this.sounds.playGameWon();
         }
     }
 
