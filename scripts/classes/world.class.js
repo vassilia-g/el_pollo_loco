@@ -63,15 +63,20 @@ class World {
      * Stop keyboard input when the player loses or wins the game.
      */
     checkGameEnd() {
+        if (this.isGameOver()) {
+            return;
+        }
         if (this.character.isDead()) {
             this.gameLost = true;
             this.keyboard.block();
+            hideMobileControls();
             return;
         }
         const endboss = this.getEndboss();
         if (endboss && endboss.isDead()) {
             this.gameWon = true;
             this.keyboard.block();
+            hideMobileControls();
         }
     }
 
@@ -304,6 +309,21 @@ class World {
         this.stopped = true;
         this.collisionIntervals.forEach(interval => clearInterval(interval));
         cancelAnimationFrame(this.animationFrameId);
+        this.destroyGameObjects();
+    }
+
+    /**
+     * Stop intervals from all active objects in this world.
+     */
+    destroyGameObjects() {
+        [
+            this.character,
+            ...this.level.chicken,
+            ...this.level.cloud,
+            ...this.level.coins,
+            ...this.level.salsa,
+            ...this.throwableSalsas
+        ].forEach(object => object.destroy?.());
     }
 
     /**

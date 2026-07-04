@@ -29,7 +29,7 @@ class ChickenSmall extends Chicken {
      */
     animate() {
         this.moveLeft();
-        setInterval(() => {
+        this.setManagedInterval(() => {
             this.updateAnimation();
         }, 150);      
     }
@@ -57,7 +57,7 @@ class ChickenSmall extends Chicken {
      * Fade the dead small chicken out over two seconds.
      */
     fadeOut() {
-        const interval = setInterval(() => {
+        const interval = this.setManagedInterval(() => {
             this.reduceOpacity(interval);
         }, 50);
     }

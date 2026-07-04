@@ -51,7 +51,7 @@ class Salsa extends MoveableObject {
      * Move the thrown bottle in an arc until it hits the ground.
      */
     startThrowMovement() {
-        this.throwInterval = setInterval(() => {
+        this.throwInterval = this.setManagedInterval(() => {
             this.x += this.speedX;
             this.y += this.speedY;
             this.speedY += this.acceleration;
@@ -65,7 +65,7 @@ class Salsa extends MoveableObject {
      * Rotate the bottle while it flies.
      */
     startRotationAnimation() {
-        this.animationInterval = setInterval(() => {
+        this.animationInterval = this.setManagedInterval(() => {
             if (!this.splashing) {
                 this.playAnimation(this.IMAGES_SALSA_ROTATION);
             }
@@ -81,8 +81,8 @@ class Salsa extends MoveableObject {
         }
         this.splashing = true;
         this.speedX = 0;
-        clearInterval(this.throwInterval);
-        clearInterval(this.animationInterval);
+        this.clearManagedInterval(this.throwInterval);
+        this.clearManagedInterval(this.animationInterval);
         this.sounds?.playSplash();
         this.playSplashAnimation();
     }
@@ -92,11 +92,11 @@ class Salsa extends MoveableObject {
      */
     playSplashAnimation() {
         this.currentImage = 0;
-        const interval = setInterval(() => {
+        const interval = this.setManagedInterval(() => {
             this.playAnimation(this.IMAGES_SALSA_SPLASH);
             if (this.currentImage >= this.IMAGES_SALSA_SPLASH.length) {
                 this.visible = false;
-                clearInterval(interval);
+                this.clearManagedInterval(interval);
             }
         }, 80);
     }
@@ -105,7 +105,7 @@ class Salsa extends MoveableObject {
      * Fade the salsa bottles out over two seconds.
      */
     fadeOut() {
-        const interval = setInterval(() => {
+        const interval = this.setManagedInterval(() => {
             this.reduceOpacity(interval);
         }, 0.001);
     }
@@ -118,7 +118,7 @@ class Salsa extends MoveableObject {
         this.opacity = Math.max(0, this.opacity - 0.025);
         if (this.opacity === 0) {
             this.visible = false;
-            clearInterval(interval);
+            this.clearManagedInterval(interval);
         }
     }
 }

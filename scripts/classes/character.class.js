@@ -91,14 +91,14 @@ class Character extends MoveableObject {
      */
     animate() {
         let lastAnimation = '';
-        setInterval(() => {
+        this.setManagedInterval(() => {
             this.handleMovement();
             this.handleJumpInput();
             this.applyGravity();
             this.updateCamera();
         }, 1000 / 60);
 
-        setInterval(() => {
+        this.setManagedInterval(() => {
             lastAnimation = this.updateAnimation(lastAnimation);
         }, 100);
     }
@@ -208,7 +208,7 @@ class Character extends MoveableObject {
      * Apply acceleration to the character for gravity effect.
      */
     applyacceleration() {
-        setInterval(() => {
+        this.setManagedInterval(() => {
             if (this.y < this.groundY) {
                 this.speedY += this.acceleration;
                 this.y += this.speedY;

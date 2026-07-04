@@ -47,6 +47,7 @@ function startGameOnPlayClick(event) {
  */
 function startGame() {
     KEYBOARD = new Keyboard();
+    showMobileControls();
     world = new World(CANVAS, KEYBOARD, gameScreens);
 }
 
@@ -129,6 +130,22 @@ function clearHomeButtonHover() {
         return;
     }
     gameScreens.clearHomeButtonHover(world.ctx);
+}
+
+/**
+ * Show mobile controls while a game is running.
+ */
+function showMobileControls() {
+    document.body.classList.add("game-started");
+}
+
+/**
+ * Hide mobile controls outside of active gameplay.
+ */
+function hideMobileControls() {
+    document.body.classList.remove("game-started");
+    resetMobileJoystick();
+    stopMobileThrow();
 }
 
 /**

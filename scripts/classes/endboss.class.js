@@ -64,7 +64,7 @@ class Endboss extends MoveableObject {
      */
     animate() {
         this.moveLeft();
-        setInterval(() => {
+        this.setManagedInterval(() => {
             this.updateAnimation();
         }, 150);      
     }
@@ -146,7 +146,7 @@ class Endboss extends MoveableObject {
      * Fade the dead endboss out slowly.
      */
     fadeOut() {
-        const interval = setInterval(() => {
+        const interval = this.setManagedInterval(() => {
             this.reduceOpacity(interval);
         }, 50);
     }
@@ -159,7 +159,7 @@ class Endboss extends MoveableObject {
         this.opacity = Math.max(0, this.opacity - 0.025);
         if (this.opacity === 0) {
             this.visible = false;
-            clearInterval(interval);
+            this.clearManagedInterval(interval);
         }
     }
 }

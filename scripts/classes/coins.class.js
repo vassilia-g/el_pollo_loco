@@ -22,7 +22,7 @@ class Coins extends MoveableObject {
      * Animate the coins by changing images at a set interval.
      */
     animate() {
-        setInterval(() => {
+        this.setManagedInterval(() => {
             this.playAnimation(this.IMAGES_COINS);
         }, 400);
     }
@@ -31,7 +31,7 @@ class Coins extends MoveableObject {
      * Fade the coins out over two seconds.
      */
     fadeOut() {
-        const interval = setInterval(() => {
+        const interval = this.setManagedInterval(() => {
             this.reduceOpacity(interval);
         }, 0.1);
     }
@@ -44,7 +44,7 @@ class Coins extends MoveableObject {
         this.opacity = Math.max(0, this.opacity - 0.025);
         if (this.opacity === 0) {
             this.visible = false;
-            clearInterval(interval);
+            this.clearManagedInterval(interval);
         }
     }
 }

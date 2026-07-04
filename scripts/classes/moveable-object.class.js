@@ -18,6 +18,7 @@ class MoveableObject {
     hurt = false;
     opacity = 1;
     visible = true;
+    intervals = [];
 
     /**
      * Draw the object on the canvas.
@@ -88,7 +89,7 @@ class MoveableObject {
      * Apply acceleration to the object, making it fall down if it's above the ground level.
      */
     applyacceleration() {
-        setInterval(() => {
+        this.setManagedInterval(() => {
             if (this.y < 271) {
                 this.speedY += this.acceleration;
                 this.y += this.speedY;
@@ -153,7 +154,7 @@ class MoveableObject {
      * Move the object to the right
      */
     moveRight() {
-        setInterval(() => {
+        this.setManagedInterval(() => {
             this.x -= this.speed;
         }, 1000 / 60);
     }
@@ -162,9 +163,45 @@ class MoveableObject {
      * Move the object to the left
      */
     moveLeft() {
-        setInterval(() => {
+        this.setManagedInterval(() => {
             this.x -= this.speed;
         }, 1000 / 60);   
+    }
+
+    /**
+     * Start an interval that can be cleaned up when the object is destroyed.
+     * @param {Function} callback - Function to run repeatedly
+     * @param {number} delay - Interval delay in milliseconds
+     * @returns {number} The interval identifier
+     */
+    setManagedInterval(callback, delay) {
+        const interval = setInterval(callback, delay);
+        this.intervals.push(interval);
+        return interval;
+    }
+
+    /**
+     * Clear one managed interval.
+     * @param {number} interval - Interval identifier
+     */
+    clearManagedInterval(interval) {
+        clearInterval(interval);
+        this.intervals = this.intervals.filter(activeInterval => activeInterval !== interval);
+    }
+
+    /**
+     * Clear all running intervals owned by this object.
+     */
+    clearIntervals() {
+        this.intervals.forEach(interval => clearInterval(interval));
+        this.intervals = [];
+    }
+
+    /**
+     * Stop all runtime work owned by this object.
+     */
+    destroy() {
+        this.clearIntervals();
     }
 
     /**

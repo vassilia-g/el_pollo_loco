@@ -28,7 +28,7 @@ class Chicken extends MoveableObject {
      */
     animate() {
         this.moveLeft();
-        setInterval(() => {
+        this.setManagedInterval(() => {
             this.updateAnimation();
         }, 150);      
     }
@@ -56,7 +56,7 @@ class Chicken extends MoveableObject {
      * Fade the dead chicken out over two seconds.
      */
     fadeOut() {
-        const interval = setInterval(() => {
+        const interval = this.setManagedInterval(() => {
             this.reduceOpacity(interval);
         }, 50);
     }
@@ -69,7 +69,7 @@ class Chicken extends MoveableObject {
         this.opacity = Math.max(0, this.opacity - 0.025);
         if (this.opacity === 0) {
             this.visible = false;
-            clearInterval(interval);
+            this.clearManagedInterval(interval);
         }
     }
 }
