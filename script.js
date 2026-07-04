@@ -64,6 +64,9 @@ function startGame() {
  * Bind the mute button to the current and future game sounds.
  */
 function bindMuteButton() {
+    if (!MUTE_BUTTON || !MUTE_BUTTON_ICON) {
+        return;
+    }
     MUTE_BUTTON.addEventListener("pointerdown", preventButtonFocus);
     MUTE_BUTTON.addEventListener("click", toggleMute);
 }
@@ -72,7 +75,7 @@ function bindMuteButton() {
  * Toggle sound playback and switch the mute button icon.
  */
 function toggleMute() {
-    MUTE_BUTTON.blur();
+    MUTE_BUTTON?.blur();
     isMuted = !isMuted;
     localStorage.setItem(MUTE_STORAGE_KEY, String(isMuted));
     if (world) {
@@ -97,6 +100,9 @@ function applyMuteState() {
  * Show the matching sound icon for the current mute state.
  */
 function updateMuteButtonIcon() {
+    if (!MUTE_BUTTON || !MUTE_BUTTON_ICON) {
+        return;
+    }
     MUTE_BUTTON_ICON.src = isMuted ? MUTED_ICON : SOUND_ICON;
     MUTE_BUTTON.setAttribute("aria-label", isMuted ? "Ton einschalten" : "Ton ausschalten");
 }

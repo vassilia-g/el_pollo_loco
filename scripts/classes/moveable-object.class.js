@@ -48,11 +48,19 @@ class MoveableObject {
         ctx.restore();
     }
 
+    /**
+     * Check if the object is an instance of Character, Chicken, Endboss, Salsa or Coins.
+     * @returns {boolean} True if the object is an instance of one of the specified classes, false otherwise.
+     */
     hasFrame() {
         return this instanceof Character || this instanceof Chicken ||
                this instanceof Endboss || this instanceof Salsa || this instanceof Coins;
     }
 
+    /**
+     * Draw a border around the object for debugging purposes.
+     * @param {*} ctx - The canvas context to draw on
+     */
     drawBorder(ctx) {
         ctx.beginPath();
         ctx.lineWidth = "1";

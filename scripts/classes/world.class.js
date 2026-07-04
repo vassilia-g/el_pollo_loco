@@ -71,6 +71,7 @@ class World {
             this.gameLost = true;
             this.keyboard.block();
             hideMobileControls();
+            this.sounds.playGameOver();
             return;
         }
         const endboss = this.getEndboss();

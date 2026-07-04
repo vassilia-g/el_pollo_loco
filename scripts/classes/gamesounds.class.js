@@ -7,6 +7,7 @@ class GameSounds {
     coin = new Audio("assets/audio/coin.mp3");
     bottle = new Audio("assets/audio/bottle.mp3");
     splash = new Audio("assets/audio/splash.mp3");
+    gameOver = new Audio("assets/audio/game-over.mp3");
     backgroundMusic = new Audio("assets/audio/background/sonican-gypsy-tango-acoustic-folk-loop-469606.mp3");
 
     muted = false;
@@ -36,6 +37,7 @@ class GameSounds {
             this.coin,
             this.bottle,
             this.splash,
+            this.gameOver,
             this.backgroundMusic
         ];
     }
@@ -115,6 +117,28 @@ class GameSounds {
      */
     playEndboss() {
         this.play(this.endboss);
+    }
+
+    /**
+     * Plays the game over sound.
+     */
+    playGameOver() {
+        this.stopSoundsExcept(this.gameOver);
+        this.play(this.gameOver);
+    }
+
+    /**
+     * Stops every sound except the selected one.
+     * @param {Audio} excludedSound - The sound that should keep playing
+     */
+    stopSoundsExcept(excludedSound) {
+        this.getAllSounds().forEach(sound => {
+            if (sound === excludedSound) {
+                return;
+            }
+            sound.pause();
+            sound.currentTime = 0;
+        });
     }
 
     /**
