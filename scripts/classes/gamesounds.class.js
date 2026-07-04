@@ -7,12 +7,16 @@ class GameSounds {
     coin = new Audio("assets/audio/coin.mp3");
     bottle = new Audio("assets/audio/bottle.mp3");
     splash = new Audio("assets/audio/splash.mp3");
+    backgroundMusic = new Audio("assets/audio/background/sonican-gypsy-tango-acoustic-folk-loop-469606.mp3");
 
     muted = false;
     volume = 0.5;
+    backgroundVolume = 0.25;
 
     constructor() {
         this.getAllSounds().forEach(sound => sound.volume = this.volume);
+        this.backgroundMusic.loop = true;
+        this.backgroundMusic.volume = this.backgroundVolume;
     }
 
     getAllSounds() {
@@ -24,7 +28,8 @@ class GameSounds {
             this.endboss,
             this.coin,
             this.bottle,
-            this.splash
+            this.splash,
+            this.backgroundMusic
         ];
     }
 
@@ -66,9 +71,24 @@ class GameSounds {
         this.play(this.endboss);
     }
 
+    playBackgroundMusic() {
+        if (this.muted) return;
+
+        const playPromise = this.backgroundMusic.play();
+        if (playPromise) {
+            playPromise.catch(() => {});
+        }
+    }
+
+    stopBackgroundMusic() {
+        this.backgroundMusic.pause();
+        this.backgroundMusic.currentTime = 0;
+    }
+
     setVolume(volume) {
         this.volume = Math.min(Math.max(volume, 0), 1);
         this.getAllSounds().forEach(sound => sound.volume = this.volume);
+        this.backgroundMusic.volume = this.backgroundVolume;
     }
 
     toggleMute() {

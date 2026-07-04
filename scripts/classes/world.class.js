@@ -32,6 +32,7 @@ class World {
         this.keyboard = keyboard;
         this.gameScreens = gameScreens;
         this.connectCharacterToWorld();
+        this.sounds.playBackgroundMusic();
         this.draw();
         this.checkCollisions();
     }
@@ -309,6 +310,7 @@ class World {
         this.stopped = true;
         this.collisionIntervals.forEach(interval => clearInterval(interval));
         cancelAnimationFrame(this.animationFrameId);
+        this.sounds.stopBackgroundMusic();
         this.destroyGameObjects();
     }
 

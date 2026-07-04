@@ -17,6 +17,9 @@ body {
 
 canvas {
     width: min(100vw, calc(100vh * 16 / 9));
+    width: min(100vw, calc(100dvh * 16 / 9));
+    max-width: 100vw;
+    max-height: 100dvh;
     aspect-ratio: 16 / 9;
     height: auto;
     display: block;
@@ -29,6 +32,37 @@ canvas {
 
 .mobile-controls {
     display: none;
+}
+
+.mute-button {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    background: rgba(43, 22, 0, 0.42);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+}
+
+.mute-button img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.mute-button:active {
+    transform: scale(0.95);
 }
 
 @media (max-width: 900px) and (orientation: portrait) {
@@ -110,14 +144,24 @@ canvas {
     }
 
     .mobile-throw-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 76px;
         height: 76px;
         border: 3px solid rgba(255, 255, 255, 0.85);
         border-radius: 50%;
         background: rgba(177, 39, 0, 0.78);
-        color: white;
-        font-size: 34px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .mobile-throw-button img {
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
     }
 
     .mobile-throw-button:active {

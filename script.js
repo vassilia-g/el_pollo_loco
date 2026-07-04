@@ -2,9 +2,15 @@ const CANVAS = document.querySelector("canvas");
 const MOBILE_JOYSTICK = document.getElementById("mobileJoystick");
 const MOBILE_JOYSTICK_KNOB = document.getElementById("mobileJoystickKnob");
 const MOBILE_THROW_BUTTON = document.getElementById("mobileThrowButton");
+const MUTE_BUTTON = document.getElementById("muteButton");
+const MUTE_BUTTON_ICON = document.getElementById("muteButtonIcon");
+const SOUND_ICON = "assets/audio/icons/volume-svgrepo-com.svg";
+const MUTED_ICON = "assets/audio/icons/volume-muted-svgrepo-com.svg";
+const MUTE_STORAGE_KEY = "elPolloLocoMuted";
 let world;
 let gameScreens;
 let KEYBOARD = new Keyboard();
+let isMuted = localStorage.getItem(MUTE_STORAGE_KEY) === "true";
 
 CANVAS.width = 960;
 CANVAS.height = 540;
@@ -19,6 +25,8 @@ function init() {
     CANVAS.addEventListener("mousemove", updatePlayButtonHover);
     CANVAS.addEventListener("mouseleave", clearPlayButtonHover);
     bindMobileControls();
+    bindMuteButton();
+    updateMuteButtonIcon();
 }
 
 /**
@@ -49,6 +57,48 @@ function startGame() {
     KEYBOARD = new Keyboard();
     showMobileControls();
     world = new World(CANVAS, KEYBOARD, gameScreens);
+    applyMuteState();
+}
+
+/**
+ * Bind the mute button to the current and future game sounds.
+ */
+function bindMuteButton() {
+    MUTE_BUTTON.addEventListener("pointerdown", preventButtonFocus);
+    MUTE_BUTTON.addEventListener("click", toggleMute);
+}
+
+/**
+ * Toggle sound playback and switch the mute button icon.
+ */
+function toggleMute() {
+    MUTE_BUTTON.blur();
+    isMuted = !isMuted;
+    localStorage.setItem(MUTE_STORAGE_KEY, String(isMuted));
+    if (world) {
+        world.sounds.toggleMute();
+        applyMuteState();
+    }
+    updateMuteButtonIcon();
+}
+
+/**
+ * Apply the current mute state to all loaded game sounds.
+ */
+function applyMuteState() {
+    if (!world) {
+        return;
+    }
+    world.sounds.muted = isMuted;
+    world.sounds.getAllSounds().forEach(sound => sound.muted = isMuted);
+}
+
+/**
+ * Show the matching sound icon for the current mute state.
+ */
+function updateMuteButtonIcon() {
+    MUTE_BUTTON_ICON.src = isMuted ? MUTED_ICON : SOUND_ICON;
+    MUTE_BUTTON.setAttribute("aria-label", isMuted ? "Ton einschalten" : "Ton ausschalten");
 }
 
 /**
@@ -170,10 +220,19 @@ function bindMobileJoystick() {
  * Bind the mobile throw button to the space action.
  */
 function bindMobileThrowButton() {
+    MOBILE_THROW_BUTTON.addEventListener("pointerdown", preventButtonFocus);
     MOBILE_THROW_BUTTON.addEventListener("pointerdown", startMobileThrow);
     MOBILE_THROW_BUTTON.addEventListener("pointerup", stopMobileThrow);
     MOBILE_THROW_BUTTON.addEventListener("pointercancel", stopMobileThrow);
     MOBILE_THROW_BUTTON.addEventListener("pointerleave", stopMobileThrow);
+}
+
+/**
+ * Prevent touch and mouse buttons from stealing keyboard focus.
+ * @param {PointerEvent} event - The pointer event
+ */
+function preventButtonFocus(event) {
+    event.preventDefault();
 }
 
 /**
