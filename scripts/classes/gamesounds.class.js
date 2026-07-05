@@ -2,10 +2,12 @@ class GameSounds {
     character = new Audio("assets/audio/character.mp3");
     steps = new Audio("assets/audio/steps.mp3");
     jump = new Audio("assets/audio/jump.mp3");
-    chicken = new Audio("assets/audio/chicken.mp3");
+    normalChicken = new Audio("assets/audio/normal-chicken.mp3");
+    smallChicken = new Audio("assets/audio/small-chicken.mp3");
     endboss = new Audio("assets/audio/endboss.mp3");
     coin = new Audio("assets/audio/coin.mp3");
     bottle = new Audio("assets/audio/bottle.mp3");
+    throwBottle = new Audio("assets/audio/throw-bottle.mp3");
     splash = new Audio("assets/audio/splash.mp3");
     gameOver = new Audio("assets/audio/game-over.mp3");
     gameWon = new Audio("assets/audio/game-won.mp3");
@@ -13,7 +15,9 @@ class GameSounds {
 
     muted = false;
     volume = 0.5;
-    backgroundVolume = 0.25;
+    backgroundVolume = 0.10;
+    endbossLoopInterval;
+    endbossLoopDelay = 2500;
 
     /**
      * Initializes the GameSounds class by setting the volume for all sounds and configuring the background music.
@@ -33,10 +37,12 @@ class GameSounds {
             this.character,
             this.steps,
             this.jump,
-            this.chicken,
+            this.normalChicken,
+            this.smallChicken,
             this.endboss,
             this.coin,
             this.bottle,
+            this.throwBottle,
             this.splash,
             this.gameOver,
             this.gameWon,
@@ -97,7 +103,7 @@ class GameSounds {
      * Plays the bottle throw sound.
      */
     playBottleThrow() {
-        this.play(this.bottle);
+        this.play(this.throwBottle);
     }
 
     /**
@@ -108,10 +114,17 @@ class GameSounds {
     }
 
     /**
-     * Plays the chicken sound.
+     * Plays the normal chicken sound.
      */
     playChicken() {
-        this.play(this.chicken);
+        this.play(this.normalChicken);
+    }
+
+    /**
+     * Plays the small chicken sound.
+     */
+    playSmallChicken() {
+        this.play(this.smallChicken);
     }
 
     /**
@@ -119,6 +132,27 @@ class GameSounds {
      */
     playEndboss() {
         this.play(this.endboss);
+    }
+
+    /**
+     * Starts repeating the endboss sound during the boss encounter.
+     */
+    startEndbossLoop() {
+        if (this.endbossLoopInterval) {
+            return;
+        }
+        this.playEndboss();
+        this.endbossLoopInterval = setInterval(() => this.playEndboss(), this.endbossLoopDelay);
+    }
+
+    /**
+     * Stops the repeating endboss sound.
+     */
+    stopEndbossLoop() {
+        clearInterval(this.endbossLoopInterval);
+        this.endbossLoopInterval = undefined;
+        this.endboss.pause();
+        this.endboss.currentTime = 0;
     }
 
     /**
@@ -142,6 +176,9 @@ class GameSounds {
      * @param {Audio} excludedSound - The sound that should keep playing
      */
     stopSoundsExcept(excludedSound) {
+        if (excludedSound !== this.endboss) {
+            this.stopEndbossLoop();
+        }
         this.getAllSounds().forEach(sound => {
             if (sound === excludedSound) {
                 return;

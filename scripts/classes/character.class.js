@@ -144,7 +144,6 @@ class Character extends MoveableObject {
             this.speedY = -this.jumpSpeed;
             this.isJumping = true;
             this.lastMoveTime = Date.now();
-            this.world.sounds.playJump();
         }
     }
 

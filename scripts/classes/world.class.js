@@ -112,10 +112,22 @@ class World {
         }
         if (chicken instanceof Chicken && this.character.isJumpingOn(chicken)) {
             chicken.die();
-            this.sounds.playChicken();
+            this.playChickenDeathSound(chicken);
             return;
         }
         this.damageCharacterOnce(chicken);
+    }
+
+    /**
+     * Play the matching sound for the defeated chicken type.
+     * @param {Chicken} chicken - The defeated chicken
+     */
+    playChickenDeathSound(chicken) {
+        if (chicken instanceof ChickenSmall) {
+            this.sounds.playSmallChicken();
+            return;
+        }
+        this.sounds.playChicken();
     }
 
     /**
@@ -312,6 +324,7 @@ class World {
         this.stopped = true;
         this.collisionIntervals.forEach(interval => clearInterval(interval));
         cancelAnimationFrame(this.animationFrameId);
+        this.sounds.stopEndbossLoop();
         this.sounds.stopBackgroundMusic();
         this.destroyGameObjects();
     }
@@ -341,7 +354,7 @@ class World {
         if (endboss.x + this.camera_x <= CANVAS.width - 100) {
             this.endbossActivated = true;
             endboss.startAlert();
-            this.sounds.playEndboss();
+            this.sounds.startEndbossLoop();
         }
     }
 

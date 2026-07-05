@@ -344,6 +344,9 @@ window.addEventListener("keydown", (event) => {
     if (event.keyCode == 38 || event.keyCode == 87) {
         if (!KEYBOARD.UP) {
             KEYBOARD.UP_PRESSED = true;
+            if (world && !world.character.isJumping) {
+                world.sounds.playJump();
+            }
         }
         KEYBOARD.UP = true;
     }
