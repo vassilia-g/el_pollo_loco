@@ -159,18 +159,34 @@ class GameScreens {
      */
     drawEndScreen(ctx, gameWon, gameLost) {
         if (gameLost) {
-            this.drawOverlay(ctx);
-            ctx.drawImage(this.gameOverImage, (CANVAS.width - 600) / 2, (CANVAS.height - 400) / 2, 600, 400);
-            this.drawEndButtons(ctx);
-            this.drawMuteButton(ctx);
+            this.drawGameOverScreen(ctx);
             return;
         }
         if (gameWon) {
-            this.drawWinOverlay(ctx);
-            ctx.drawImage(this.winImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
-            this.drawEndButtons(ctx);
-            this.drawMuteButton(ctx);
+            this.drawWinScreen(ctx);
         }
+    }
+
+    /**
+     * Draw the game over screen.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    drawGameOverScreen(ctx) {
+        this.drawOverlay(ctx);
+        ctx.drawImage(this.gameOverImage, (CANVAS.width - 600) / 2, (CANVAS.height - 400) / 2, 600, 400);
+        this.drawEndButtons(ctx);
+        this.drawMuteButton(ctx);
+    }
+
+    /**
+     * Draw the win screen.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    drawWinScreen(ctx) {
+        this.drawWinOverlay(ctx);
+        ctx.drawImage(this.winImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
+        this.drawEndButtons(ctx);
+        this.drawMuteButton(ctx);
     }
 
     /**
@@ -206,19 +222,7 @@ class GameScreens {
      * @param {CanvasRenderingContext2D} ctx - The canvas context
      */
     drawRestartButton(ctx) {
-        const button = this.restartButton;
-        ctx.save();
-        ctx.fillStyle = this.isRestartButtonHovered ? "#ffe066" : "#ffcc01";
-        ctx.strokeStyle = this.isRestartButtonHovered ? "#ffffff" : "#8b2d12";
-        ctx.lineWidth = 3;
-        ctx.fillRect(button.x, button.y, button.width, button.height);
-        ctx.strokeRect(button.x, button.y, button.width, button.height);
-        ctx.fillStyle = "#8b2d12";
-        ctx.font = "32px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("RESTART", button.x + button.width / 2, button.y + button.height / 2);
-        ctx.restore();
+        this.drawEndButton(ctx, this.restartButton, "RESTART", this.isRestartButtonHovered);
     }
 
     /**
@@ -267,10 +271,20 @@ class GameScreens {
      * @param {CanvasRenderingContext2D} ctx - The canvas context
      */
     drawHomeButton(ctx) {
-        const button = this.homeButton;
+        this.drawEndButton(ctx, this.homeButton, "HOME", this.isHomeButtonHovered);
+    }
+
+    /**
+     * Draw an end screen button.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     * @param {{x: number, y: number, width: number, height: number}} button - Button rectangle
+     * @param {string} label - Button label
+     * @param {boolean} isHovered - Whether the button is hovered
+     */
+    drawEndButton(ctx, button, label, isHovered) {
         ctx.save();
-        ctx.fillStyle = this.isHomeButtonHovered ? "#ffe066" : "#ffcc01";
-        ctx.strokeStyle = this.isHomeButtonHovered ? "#ffffff" : "#8b2d12";
+        ctx.fillStyle = isHovered ? "#ffe066" : "#ffcc01";
+        ctx.strokeStyle = isHovered ? "#ffffff" : "#8b2d12";
         ctx.lineWidth = 3;
         ctx.fillRect(button.x, button.y, button.width, button.height);
         ctx.strokeRect(button.x, button.y, button.width, button.height);
@@ -278,7 +292,7 @@ class GameScreens {
         ctx.font = "32px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("HOME", button.x + button.width / 2, button.y + button.height / 2);
+        ctx.fillText(label, button.x + button.width / 2, button.y + button.height / 2);
         ctx.restore();
     }
 

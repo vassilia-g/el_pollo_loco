@@ -35,22 +35,43 @@ class GameSounds {
      * @returns {Audio[]} An array containing all sound objects.
      */
     getAllSounds() {
-        return [
-            this.character,
-            this.steps,
-            this.jump,
-            this.normalChicken,
-            this.smallChicken,
-            this.endboss,
-            this.coin,
-            this.bottleCollect,
-            this.hurtMale,
-            this.throwBottle,
-            this.splash,
-            this.gameOver,
-            this.gameWon,
-            this.backgroundMusic
-        ];
+        return this.getCharacterSounds()
+            .concat(this.getEnemySounds())
+            .concat(this.getCollectibleSounds())
+            .concat(this.getEndScreenSounds())
+            .concat(this.backgroundMusic);
+    }
+
+    /**
+     * Return character-related sounds.
+     * @returns {Audio[]} Character sounds
+     */
+    getCharacterSounds() {
+        return [this.character, this.steps, this.jump, this.hurtMale];
+    }
+
+    /**
+     * Return enemy-related sounds.
+     * @returns {Audio[]} Enemy sounds
+     */
+    getEnemySounds() {
+        return [this.normalChicken, this.smallChicken, this.endboss];
+    }
+
+    /**
+     * Return collectible and bottle sounds.
+     * @returns {Audio[]} Collectible sounds
+     */
+    getCollectibleSounds() {
+        return [this.coin, this.bottleCollect, this.throwBottle, this.splash];
+    }
+
+    /**
+     * Return game end sounds.
+     * @returns {Audio[]} End screen sounds
+     */
+    getEndScreenSounds() {
+        return [this.gameOver, this.gameWon];
     }
 
     /**

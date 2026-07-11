@@ -33,17 +33,22 @@ function init() {
  * @param {MouseEvent} event - The click event
  */
 function startGameOnPlayClick(event) {
-    if (gameScreens.handleInstructionsClick(event)) {
+    if (gameScreens.handleInstructionsClick(event) || !gameScreens.isPlayButtonClicked(event)) {
         return;
     }
-    if (!gameScreens.isPlayButtonClicked(event)) {
-        return;
-    }
+    unbindStartScreenEvents();
+    startGame();
+    bindEndScreenEvents();
+}
+
+function unbindStartScreenEvents() {
     CANVAS.removeEventListener("click", startGameOnPlayClick);
     CANVAS.removeEventListener("mousemove", updatePlayButtonHover);
     CANVAS.removeEventListener("mouseleave", clearPlayButtonHover);
     CANVAS.style.cursor = "default";
-    startGame();
+}
+
+function bindEndScreenEvents() {
     CANVAS.addEventListener("click", restartGameOnClick);
     CANVAS.addEventListener("click", goHomeOnClick);
     CANVAS.addEventListener("mousemove", updateRestartButtonHover);
@@ -52,9 +57,7 @@ function startGameOnPlayClick(event) {
     CANVAS.addEventListener("mouseleave", clearHomeButtonHover);
 }
 
-/**
- * Start a fresh game world.
- */
+/** Start a fresh game world. */
 function startGame() {
     KEYBOARD = new Keyboard();
     showMobileControls();
@@ -133,6 +136,7 @@ function updatePlayButtonHover(event) {
 function clearPlayButtonHover() {
     gameScreens.clearPlayButtonHover();
 }
+
 /**
  * Restart the game from the game over screen without reloading the page.
  * @param {MouseEvent} event - The click event
@@ -253,33 +257,36 @@ function preventButtonFocus(event) {
     event.preventDefault();
 }
 
-/**
- * Start tracking the virtual joystick.
- * @param {PointerEvent} event - The pointer event
- */
+/** @param {PointerEvent} event - The pointer event. */
 function startMobileJoystick(event) {
     MOBILE_JOYSTICK.setPointerCapture(event.pointerId);
     moveMobileJoystick(event);
 }
 
-/**
- * Update keyboard flags from the current joystick pointer position.
- * @param {PointerEvent} event - The pointer event
- */
+/** @param {PointerEvent} event - The pointer event. */
 function moveMobileJoystick(event) {
     event.preventDefault();
     if (KEYBOARD.blocked) {
         return;
     }
+    updateJoystickFromEvent(event);
+}
+
+function updateJoystickFromEvent(event) {
+    const offset = getJoystickOffset(event);
+    updateJoystickKnob(offset.x, offset.y);
+    updateJoystickKeyboard(offset.x, offset.y);
+}
+
+function getJoystickOffset(event) {
     const rect = MOBILE_JOYSTICK.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     const maxDistance = rect.width / 2 - 21;
-    const x = Math.max(-maxDistance, Math.min(event.clientX - centerX, maxDistance));
-    const y = Math.max(-maxDistance, Math.min(event.clientY - centerY, maxDistance));
-
-    updateJoystickKnob(x, y);
-    updateJoystickKeyboard(x, y);
+    return {
+        x: Math.max(-maxDistance, Math.min(event.clientX - centerX, maxDistance)),
+        y: Math.max(-maxDistance, Math.min(event.clientY - centerY, maxDistance))
+    };
 }
 
 /**
@@ -317,10 +324,7 @@ function resetMobileJoystick() {
     KEYBOARD.UP_PRESSED = false;
 }
 
-/**
- * Trigger salsa throwing from the mobile action button.
- * @param {PointerEvent} event - The pointer event
- */
+/** @param {PointerEvent} event - The pointer event. */
 function startMobileThrow(event) {
     event.preventDefault();
     if (KEYBOARD.blocked) {
@@ -340,9 +344,6 @@ function stopMobileThrow() {
     KEYBOARD.SPACE_PRESSED = false;
 }
 
-/**
- * This class represents the main character of the game. It contains all methods and attributes that are needed for the character.
- */
 window.addEventListener("keydown", (event) => {
      if (KEYBOARD.blocked) {
         return;
@@ -373,9 +374,6 @@ window.addEventListener("keydown", (event) => {
     }
 });
 
-/**
- * This class represents the main character of the game. It contains all methods and attributes that are needed for the character.
- */
 window.addEventListener("keyup", (event) => {
      if (KEYBOARD.blocked) {
         return;

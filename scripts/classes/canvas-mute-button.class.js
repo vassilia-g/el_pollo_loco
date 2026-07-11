@@ -34,6 +34,17 @@ class CanvasMuteButton {
         const button = this.button;
         const icon = isMuted ? this.mutedIcon : this.soundIcon;
         ctx.save();
+        this.drawCircle(ctx, button);
+        this.drawIcon(ctx, icon, button);
+        ctx.restore();
+    }
+
+    /**
+     * Draw the circular button background.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     * @param {{x: number, y: number, width: number, height: number}} button - Button rectangle
+     */
+    drawCircle(ctx, button) {
         ctx.fillStyle = this.isHovered ? "rgba(255, 224, 102, 0.95)" : "rgba(43, 22, 0, 0.48)";
         ctx.strokeStyle = this.isHovered ? "#ffffff" : "rgba(255, 255, 255, 0.86)";
         ctx.lineWidth = 2;
@@ -41,10 +52,18 @@ class CanvasMuteButton {
         ctx.arc(button.x + button.width / 2, button.y + button.height / 2, button.width / 2, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+    }
+
+    /**
+     * Draw the current mute icon.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     * @param {HTMLImageElement} icon - The icon to draw
+     * @param {{x: number, y: number}} button - Button position
+     */
+    drawIcon(ctx, icon, button) {
         if (icon.complete) {
             ctx.drawImage(icon, button.x + 13, button.y + 13, 28, 28);
         }
-        ctx.restore();
     }
 
     /**

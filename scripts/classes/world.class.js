@@ -30,6 +30,7 @@ class World {
      */
     constructor(canvas, keyboard, gameScreens, muteButton) {
         this.ctx = canvas.getContext("2d");
+        this.renderer = new WorldRenderer(this.ctx);
         this.keyboard = keyboard;
         this.gameScreens = gameScreens;
         this.muteButton = muteButton;
@@ -62,40 +63,47 @@ class World {
         }, 1000 / 60));
     }
 
-    /**
-     * Stop keyboard input when the player loses or wins the game.
-     */
+    /** Stop keyboard input when the player loses or wins. */
     checkGameEnd() {
         if (this.isGameOver()) {
             return;
         }
         if (this.character.isDead()) {
-            this.gameLost = true;
-            this.keyboard.block();
-            hideMobileControls();
-            this.sounds.playGameOver();
+            this.loseGame();
             return;
         }
         const endboss = this.getEndboss();
         if (endboss && endboss.isDead()) {
-            this.gameWon = true;
-            this.keyboard.block();
-            hideMobileControls();
-            this.sounds.playGameWon();
+            this.winGame();
         }
     }
 
-    /**
-     * Find the endboss in the current level.
-     * @returns {Endboss|undefined} The level endboss
-     */
+    /** Switch the world into the lost state. */
+    loseGame() {
+        this.gameLost = true;
+        this.stopGameplayInput();
+        this.sounds.playGameOver();
+    }
+
+    /** Switch the world into the won state. */
+    winGame() {
+        this.gameWon = true;
+        this.stopGameplayInput();
+        this.sounds.playGameWon();
+    }
+
+    /** Stop player input and hide mobile controls after the game ends. */
+    stopGameplayInput() {
+        this.keyboard.block();
+        hideMobileControls();
+    }
+
+    /** @returns {Endboss|undefined} The level endboss. */
     getEndboss() {
         return this.level.chicken.find(enemy => enemy instanceof Endboss);
     }
 
-    /**
-     * Check for collisions between the character and chickens. If a collision is detected, handle it accordingly (e.g., damage the character or kill the chicken).
-     */
+    /** Check collisions between the character and chickens. */
     checkChickenCollisions() {
         if (this.isGameOver()) {
             return;
@@ -256,25 +264,31 @@ class World {
         });
     }
 
-    /**
-     * Damage or kill enemies when a thrown salsa bottle hits them.
-     * @param {Salsa} bottle - The thrown salsa bottle
-     * @param {MoveableObject} enemy - The enemy hit by the bottle
-     */
+    /** Damage or kill enemies when a thrown salsa bottle hits them. */
     handleThrowableCollision(bottle, enemy) {
         if (bottle.splashing || !enemy.visible || enemy.isDead() || !bottle.isColliding(enemy)) {
             return;
         }
         if (enemy instanceof Endboss) {
-            enemy.hit();
-            this.statusBars.setEndbossHealth(enemy.health);
-            this.alignBottleSplashWithEndboss(bottle, enemy);
+            this.hitEndbossWithBottle(bottle, enemy);
         } else if (enemy instanceof Chicken) {
-            this.alignBottleSplashWithEnemy(bottle, enemy);
-            enemy.die();
-            this.playChickenDeathSound(enemy);
+            this.hitChickenWithBottle(bottle, enemy);
         }
         bottle.splash();
+    }
+
+    /** Damage the endboss with a thrown bottle. */
+    hitEndbossWithBottle(bottle, endboss) {
+        endboss.hit();
+        this.statusBars.setEndbossHealth(endboss.health);
+        this.alignBottleSplashWithEndboss(bottle, endboss);
+    }
+
+    /** Kill a chicken with a thrown bottle. */
+    hitChickenWithBottle(bottle, chicken) {
+        this.alignBottleSplashWithEnemy(bottle, chicken);
+        chicken.die();
+        this.playChickenDeathSound(chicken);
     }
 
     /**
@@ -319,15 +333,7 @@ class World {
         }
         this.ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
         this.camera_x = Math.round(this.camera_x_float || this.camera_x);
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.background);
-        this.addObjectsToMap(this.level.cloud);
-        this.addObjectsToMap(this.level.coins);
-        this.addObjectsToMap(this.level.salsa);
-        this.addToMap(this.character);
-        this.addObjectsToMap(this.level.chicken);
-        this.addObjectsToMap(this.throwableSalsas);
-        this.ctx.translate(-this.camera_x, 0);
+        this.renderer.drawGameObjects(this);
         this.checkEndbossActivation();
         this.statusBars.draw(this.ctx, this);
         this.drawEndScreen();
@@ -384,48 +390,10 @@ class World {
     }
 
     /**
-     * Draw a single object on the canvas.
+     * Draw a single object through the world renderer.
      * @param {MoveableObject} object - The object to be drawn
      */
     addToMap(object) {
-        if (object.otherDirection) {
-            this.flipImage(object);
-        }
-        object.draw(this.ctx);
-        object.drawFrame(this.ctx);
-
-        if (object.otherDirection) {
-            this.flipImageBack(object);
-        }
-    }
-
-    /**
-     * Draw multiple objects on the canvas.
-     * @param {MoveableObject[]} objects - An array of objects to be drawn
-     */
-    addObjectsToMap(objects) {
-        objects.forEach(object => {
-            this.addToMap(object);
-        });
-    }
-
-    /**
-     * Flip the image of an object horizontally.
-     * @param {MoveableObject} object - The object whose image needs to be flipped
-     */
-    flipImage(object) {
-        this.ctx.save();
-        this.ctx.translate(object.width, 0);
-        this.ctx.scale(-1, 1);
-        object.x = object.x * -1;
-    }
-
-    /**
-     * Flip the image back to its original orientation.
-     * @param {MoveableObject} object - The object whose image needs to be flipped back
-     */
-    flipImageBack(object) {
-        object.x = object.x * -1;
-        this.ctx.restore();
+        this.renderer.addToMap(object);
     }
 }

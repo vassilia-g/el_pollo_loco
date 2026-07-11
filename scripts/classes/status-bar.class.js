@@ -36,21 +36,6 @@ class StatusBar extends MoveableObject {
      * @returns {number} Image index
      */
     resolveImageIndex() {
-        if (this.percentage <= 0) {
-            return 0;
-        }
-        if (this.percentage <= 20) {
-            return 1;
-        }
-        if (this.percentage <= 40) {
-            return 2;
-        }
-        if (this.percentage <= 60) {
-            return 3;
-        }
-        if (this.percentage <= 80) {
-            return 4;
-        }
-        return 5;
+        return Math.ceil(this.percentage / 20);
     }
 }

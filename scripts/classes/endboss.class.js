@@ -88,11 +88,14 @@ class Endboss extends MoveableObject {
             this.playStateAnimation(this.IMAGES_DEAD, "dead");
             return;
         }
-        if (this.isHurt()) {
-            this.playStateAnimation(this.IMAGES_HURT, "hurt");
-            this.hurt = this.currentImage < this.IMAGES_HURT.length;
+        if (this.playHurtIfNeeded()) {
             return;
         }
+        this.playActiveAnimation();
+    }
+
+    /** Play the current non-hurt, non-dead animation. */
+    playActiveAnimation() {
         if (this.animationState === "alert") {
             this.playAlertAnimation();
             return;
@@ -102,6 +105,16 @@ class Endboss extends MoveableObject {
             return;
         }
         this.playStateAnimation(this.IMAGES_WALKING, "walking");
+    }
+
+    /** @returns {boolean} True when the hurt animation was used. */
+    playHurtIfNeeded() {
+        if (!this.isHurt()) {
+            return false;
+        }
+        this.playStateAnimation(this.IMAGES_HURT, "hurt");
+        this.hurt = this.currentImage < this.IMAGES_HURT.length;
+        return true;
     }
 
     /**

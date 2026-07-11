@@ -103,35 +103,51 @@ class Character extends MoveableObject {
         }, 100);
     }
 
-    /**
-     * Handle the character's horizontal movement based on keyboard input and update the last move time. 
-     */
+    /** Handle horizontal movement and step sounds. */
     handleMovement() {
         if (this.isDead()) {
             this.world.sounds.stopSteps();
             return;
         }
-        let isMoving = false;
-        const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
-        if (!bothHorizontal && this.world.keyboard.LEFT && this.x > -500) {
-            this.x -= this.speed;
-            this.otherDirection = true;
-            this.lastMoveTime = Date.now();
-            isMoving = true;
-        }
-        if (!bothHorizontal && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-            this.x += this.speed;
-            this.otherDirection = false;
-            this.lastMoveTime = Date.now();
-            isMoving = true;
-        }
-        this.updateStepSound(isMoving);
+        this.updateStepSound(this.moveHorizontally());
     }
 
-    /**
-     * Play steps while the character is walking on the ground.
-     * @param {boolean} isMoving - Whether the character moved horizontally this frame
-     */
+    /** @returns {boolean} True when Pepe moved horizontally. */
+    moveHorizontally() {
+        if (this.isHorizontalBlocked()) {
+            return false;
+        }
+        return this.moveLeftIfPressed() || this.moveRightIfPressed();
+    }
+
+    /** @returns {boolean} True when both horizontal directions are pressed. */
+    isHorizontalBlocked() {
+        return this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
+    }
+
+    /** @returns {boolean} True when Pepe moved left. */
+    moveLeftIfPressed() {
+        if (!this.world.keyboard.LEFT || this.x <= -500) {
+            return false;
+        }
+        this.x -= this.speed;
+        this.otherDirection = true;
+        this.lastMoveTime = Date.now();
+        return true;
+    }
+
+    /** @returns {boolean} True when Pepe moved right. */
+    moveRightIfPressed() {
+        if (!this.world.keyboard.RIGHT || this.x >= this.world.level.level_end_x) {
+            return false;
+        }
+        this.x += this.speed;
+        this.otherDirection = false;
+        this.lastMoveTime = Date.now();
+        return true;
+    }
+
+    /** @param {boolean} isMoving - Whether Pepe moved horizontally this frame. */
     updateStepSound(isMoving) {
         if (isMoving && !this.isJumping) {
             this.world.sounds.playSteps();
@@ -140,9 +156,7 @@ class Character extends MoveableObject {
         this.world.sounds.stopSteps();
     }
 
-    /**
-     * Handle the character's jump input and set the appropriate speed and state for jumping.
-     */
+    /** Handle jump input. */
     handleJumpInput() {
         if (this.isDead()) {
             return;
@@ -153,9 +167,7 @@ class Character extends MoveableObject {
         }
     }
 
-    /**
-     * Make the character jump
-     */
+    /** Make the character jump. */
     jump() {
         if (!this.isJumping) {
             this.speedY = -this.jumpSpeed;
@@ -164,10 +176,7 @@ class Character extends MoveableObject {
         }
     }
 
-    /**
-     * This method applies gravity to the character by increasing the vertical speed and updating the y position. It also checks if the character has landed on the ground and resets the jumping state accordingly.
-     * @returns 
-     */
+    /** Apply gravity and landing behavior. */
     applyGravity() {
         if (this.isDead()) {
             this.fallAfterDeath();
@@ -179,38 +188,42 @@ class Character extends MoveableObject {
         this.y += this.speedY;
         this.speedY += this.getGravityAcceleration(); 
         this.updateStartFallKeyboard();
-        if (this.y >= this.groundY) {
-            const wasStartFall = !this.hasLandedOnce;
-            this.y = this.groundY;
-            this.isJumping = false;
-            this.speedY = 0;
-            this.hasLandedOnce = true;
-            if (wasStartFall) {
-                this.world.keyboard.unblock();
-            }
+        this.landOnGround();
+    }
+
+    /** Stop jumping when Pepe reaches the ground. */
+    landOnGround() {
+        if (this.y < this.groundY) {
+            return;
+        }
+        const wasStartFall = !this.hasLandedOnce;
+        this.resetJumpState();
+        if (wasStartFall) {
+            this.world.keyboard.unblock();
         }
     }
 
-    /**
-     * Use slower gravity before the first landing and normal gravity afterwards.
-     * @returns {number} The current gravity acceleration
-     */
+    /** Reset Pepe to a grounded jump state. */
+    resetJumpState() {
+        this.y = this.groundY;
+        this.isJumping = false;
+        this.speedY = 0;
+        this.hasLandedOnce = true;
+    }
+
+    /** @returns {number} The current gravity acceleration. */
     getGravityAcceleration() {
         return this.hasLandedOnce ? this.acceleration : this.startFallAcceleration;
     }
 
-    /**
-     * Block controls only while Pepe is falling into the level at game start.
-     */
+    /** Block controls while Pepe falls into the level at game start. */
     updateStartFallKeyboard() {
         if (!this.hasLandedOnce) {
             this.world.keyboard.block();
         }
     }
 
-    /**
-     * Update the camera position based on the character's x position to keep the character centered on the screen.
-     */
+    /** Update the camera position based on Pepe's x-position. */
     updateCamera() {
         const cam = -this.x + 230;
         this.world.camera_x_float = cam;
@@ -220,9 +233,7 @@ class Character extends MoveableObject {
         }
     }
 
-    /**
-     * Apply acceleration to the character for gravity effect.
-     */
+    /** Apply acceleration to the character for gravity effect. */
     applyacceleration() {
         this.setManagedInterval(() => {
             if (this.y < this.groundY) {
@@ -232,9 +243,7 @@ class Character extends MoveableObject {
         }, 1000 / 45);
     }
 
-    /**
-     * Damage the character and wake him from long idle.
-     */
+    /** Damage the character and wake him from long idle. */
     hit() {
         super.hit();
         this.lastMoveTime = Date.now();

@@ -182,16 +182,44 @@ class GameInstructions {
      * @returns {string[]} Lines of imprint text
      */
     getImprintLines() {
+        return this.getImprintOwnerLines()
+            .concat(this.getImprintProjectLines())
+            .concat(this.getImprintAudioLines());
+    }
+
+    /**
+     * Return legal owner lines for the imprint.
+     * @returns {string[]} Legal owner lines
+     */
+    getImprintOwnerLines() {
         return [
             "Legal Notice",
             "",
             "Vassilia Gerodimos",
             "Mörfelder Landstraße 62",
             "Email: vassilia@gerodimos.com",
-            "",
+            ""
+        ];
+    }
+
+    /**
+     * Return project context lines for the imprint.
+     * @returns {string[]} Project context lines
+     */
+    getImprintProjectLines() {
+        return [
             "Project",
             "This game was created as part of a Developer Akademie module.",
-            "",
+            ""
+        ];
+    }
+
+    /**
+     * Return audio credit lines for the imprint.
+     * @returns {string[]} Audio credit lines
+     */
+    getImprintAudioLines() {
+        return [
             "Audio Credits",
             "Original sound effects by Vassilia Gerodimos:",
             "throw bottle, footsteps, chickens, endboss, jump,",
@@ -225,20 +253,44 @@ class GameInstructions {
      */
     handleClick(event) {
         if (this.visible) {
-            this.visible = this.isDialogClicked(event) && !this.isCloseButtonClicked(event);
+            this.updateVisibleDialog(event);
             return true;
         }
+        return this.openStartDialog(event);
+    }
+
+    /**
+     * Keep or close the currently visible dialog after a click.
+     * @param {MouseEvent} event - The click event
+     */
+    updateVisibleDialog(event) {
+        this.visible = this.isDialogClicked(event) && !this.isCloseButtonClicked(event);
+    }
+
+    /**
+     * Open a start screen dialog when its button is clicked.
+     * @param {MouseEvent} event - The click event
+     * @returns {boolean} True when a dialog was opened
+     */
+    openStartDialog(event) {
         if (this.isHelpButtonClicked(event)) {
-            this.visible = true;
-            this.activeDialog = "instructions";
-            return true;
+            return this.openDialog("instructions");
         }
         if (this.isImprintButtonClicked(event)) {
-            this.visible = true;
-            this.activeDialog = "imprint";
-            return true;
+            return this.openDialog("imprint");
         }
         return false;
+    }
+
+    /**
+     * Open the selected dialog.
+     * @param {string} dialog - Dialog id
+     * @returns {boolean} Always true after opening
+     */
+    openDialog(dialog) {
+        this.visible = true;
+        this.activeDialog = dialog;
+        return true;
     }
 
     /**
