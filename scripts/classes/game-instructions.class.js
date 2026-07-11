@@ -225,7 +225,7 @@ class GameInstructions {
      */
     handleClick(event) {
         if (this.visible) {
-            this.visible = !this.isCloseButtonClicked(event);
+            this.visible = this.isDialogClicked(event) && !this.isCloseButtonClicked(event);
             return true;
         }
         if (this.isHelpButtonClicked(event)) {
@@ -294,6 +294,15 @@ class GameInstructions {
      */
     isImprintButtonClicked(event) {
         return this.isPositionInsideButton(this.getCanvasClickPosition(event), this.imprintButton);
+    }
+
+    /**
+     * Check whether a click is inside the open dialog.
+     * @param {MouseEvent} event - The click event
+     * @returns {boolean} True when the dialog was clicked
+     */
+    isDialogClicked(event) {
+        return this.isPositionInsideButton(this.getCanvasClickPosition(event), this.dialog);
     }
 
     /**

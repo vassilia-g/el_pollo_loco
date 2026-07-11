@@ -265,13 +265,14 @@ class World {
         if (bottle.splashing || !enemy.visible || enemy.isDead() || !bottle.isColliding(enemy)) {
             return;
         }
-        if (enemy instanceof Chicken) {
-            return;
-        }
         if (enemy instanceof Endboss) {
             enemy.hit();
             this.statusBars.setEndbossHealth(enemy.health);
             this.alignBottleSplashWithEndboss(bottle, enemy);
+        } else if (enemy instanceof Chicken) {
+            this.alignBottleSplashWithEnemy(bottle, enemy);
+            enemy.die();
+            this.playChickenDeathSound(enemy);
         }
         bottle.splash();
     }
@@ -287,6 +288,19 @@ class World {
             return;
         }
         bottle.x = endboss.x + endboss.width - bottle.width - 20;
+    }
+
+    /**
+     * Move the splash animation closer to the visible side of a small enemy.
+     * @param {Salsa} bottle - The bottle that hit the enemy
+     * @param {Chicken} enemy - The hit chicken
+     */
+    alignBottleSplashWithEnemy(bottle, enemy) {
+        if (bottle.speedX > 0) {
+            bottle.x = enemy.x + 10;
+            return;
+        }
+        bottle.x = enemy.x + enemy.width - bottle.width - 10;
     }
 
     /**

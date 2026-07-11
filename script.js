@@ -133,28 +133,28 @@ function updatePlayButtonHover(event) {
 function clearPlayButtonHover() {
     gameScreens.clearPlayButtonHover();
 }
-
 /**
  * Restart the game from the game over screen without reloading the page.
  * @param {MouseEvent} event - The click event
  */
 function restartGameOnClick(event) {
-    if (!world || !world.gameLost || !gameScreens.isRestartButtonClicked(event)) {
+    if (!isEndScreenVisible() || !gameScreens.isRestartButtonClicked(event)) {
         return;
     }
+    world.sounds.stopEndSounds();
     world.destroy();
     gameScreens.clearRestartButtonHover(world.ctx);
     startGame();
 }
-
 /**
  * Reload the page from the win screen to return home.
  * @param {MouseEvent} event - The click event
  */
 function goHomeOnClick(event) {
-    if (!world || !world.gameWon || !gameScreens.isHomeButtonClicked(event)) {
+    if (!isEndScreenVisible() || !gameScreens.isHomeButtonClicked(event)) {
         return;
     }
+    world.sounds.stopEndSounds();
     location.reload();
 }
 
@@ -163,7 +163,7 @@ function goHomeOnClick(event) {
  * @param {MouseEvent} event - The mouse move event
  */
 function updateRestartButtonHover(event) {
-    if (!world || !world.gameLost) {
+    if (!isEndScreenVisible()) {
         return;
     }
     gameScreens.updateRestartButtonHover(event, world.ctx);
@@ -174,7 +174,7 @@ function updateRestartButtonHover(event) {
  * @param {MouseEvent} event - The mouse move event
  */
 function updateHomeButtonHover(event) {
-    if (!world || !world.gameWon) {
+    if (!isEndScreenVisible()) {
         return;
     }
     gameScreens.updateHomeButtonHover(event, world.ctx);
@@ -184,7 +184,7 @@ function updateHomeButtonHover(event) {
  * Clear the restart button hover state when the cursor leaves the canvas.
  */
 function clearRestartButtonHover() {
-    if (!world || !world.gameLost) {
+    if (!isEndScreenVisible()) {
         return;
     }
     gameScreens.clearRestartButtonHover(world.ctx);
@@ -194,12 +194,12 @@ function clearRestartButtonHover() {
  * Clear the home button hover state when the cursor leaves the canvas.
  */
 function clearHomeButtonHover() {
-    if (!world || !world.gameWon) {
+    if (!isEndScreenVisible()) {
         return;
     }
     gameScreens.clearHomeButtonHover(world.ctx);
 }
-
+function isEndScreenVisible() { return world && (world.gameLost || world.gameWon); }
 /**
  * Show mobile controls while a game is running.
  */
@@ -232,8 +232,8 @@ function bindMobileJoystick() {
     MOBILE_JOYSTICK.addEventListener("pointermove", moveMobileJoystick);
     MOBILE_JOYSTICK.addEventListener("pointerup", resetMobileJoystick);
     MOBILE_JOYSTICK.addEventListener("pointercancel", resetMobileJoystick);
+    MOBILE_JOYSTICK.addEventListener("contextmenu", preventButtonFocus);
 }
-
 /**
  * Bind the mobile throw button to the space action.
  */
@@ -243,8 +243,8 @@ function bindMobileThrowButton() {
     MOBILE_THROW_BUTTON.addEventListener("pointerup", stopMobileThrow);
     MOBILE_THROW_BUTTON.addEventListener("pointercancel", stopMobileThrow);
     MOBILE_THROW_BUTTON.addEventListener("pointerleave", stopMobileThrow);
+    MOBILE_THROW_BUTTON.addEventListener("contextmenu", preventButtonFocus);
 }
-
 /**
  * Prevent touch and mouse buttons from stealing keyboard focus.
  * @param {PointerEvent} event - The pointer event

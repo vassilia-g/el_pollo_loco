@@ -16,14 +16,14 @@ class GameScreens {
         height: 64
     };
     restartButton = {
-        x: 380,
-        y: 430,
+        x: 275,
+        y: 470,
         width: 200,
         height: 58
     };
     homeButton = {
-        x: 405,
-        y: 430,
+        x: 535,
+        y: 470,
         width: 150,
         height: 58
     };
@@ -161,16 +161,25 @@ class GameScreens {
         if (gameLost) {
             this.drawOverlay(ctx);
             ctx.drawImage(this.gameOverImage, (CANVAS.width - 600) / 2, (CANVAS.height - 400) / 2, 600, 400);
-            this.drawRestartButton(ctx);
+            this.drawEndButtons(ctx);
             this.drawMuteButton(ctx);
             return;
         }
         if (gameWon) {
             this.drawWinOverlay(ctx);
             ctx.drawImage(this.winImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
-            this.drawHomeButton(ctx);
+            this.drawEndButtons(ctx);
             this.drawMuteButton(ctx);
         }
+    }
+
+    /**
+     * Draw all buttons shown on end screens.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    drawEndButtons(ctx) {
+        this.drawRestartButton(ctx);
+        this.drawHomeButton(ctx);
     }
 
     /**
@@ -224,7 +233,7 @@ class GameScreens {
         }
         this.isRestartButtonHovered = isHovered;
         this.updateCursor(isHovered);
-        this.drawEndScreen(ctx, false, true);
+        this.redrawCurrentEndScreen(ctx);
     }
 
     /**
@@ -237,7 +246,7 @@ class GameScreens {
         }
         this.isRestartButtonHovered = false;
         this.updateCursor(false);
-        this.drawEndScreen(ctx, false, true);
+        this.redrawCurrentEndScreen(ctx);
     }
 
     /**
@@ -285,7 +294,7 @@ class GameScreens {
         }
         this.isHomeButtonHovered = isHovered;
         this.updateCursor(isHovered);
-        this.drawEndScreen(ctx, true, false);
+        this.redrawCurrentEndScreen(ctx);
     }
 
     /**
@@ -298,7 +307,7 @@ class GameScreens {
         }
         this.isHomeButtonHovered = false;
         this.updateCursor(false);
-        this.drawEndScreen(ctx, true, false);
+        this.redrawCurrentEndScreen(ctx);
     }
 
     /**
@@ -307,6 +316,14 @@ class GameScreens {
      */
     updateCursor(isHovered) {
         this.canvas.style.cursor = isHovered || this.muteButton?.isHovered ? "pointer" : "default";
+    }
+
+    /**
+     * Redraw the currently active end screen.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    redrawCurrentEndScreen(ctx) {
+        this.drawEndScreen(ctx, world?.gameWon, world?.gameLost);
     }
 
     /**

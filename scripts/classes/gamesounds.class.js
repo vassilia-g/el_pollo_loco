@@ -195,6 +195,16 @@ class GameSounds {
     }
 
     /**
+     * Stops the end screen sounds.
+     */
+    stopEndSounds() {
+        [this.gameOver, this.gameWon].forEach(sound => {
+            sound.pause();
+            sound.currentTime = 0;
+        });
+    }
+
+    /**
      * Stops every sound except the selected one.
      * @param {Audio} excludedSound - The sound that should keep playing
      */
