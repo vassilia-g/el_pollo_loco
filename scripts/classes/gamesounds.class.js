@@ -5,8 +5,9 @@ class GameSounds {
     normalChicken = new Audio("assets/audio/normal-chicken.mp3");
     smallChicken = new Audio("assets/audio/small-chicken.mp3");
     endboss = new Audio("assets/audio/endboss.mp3");
-    coin = new Audio("assets/audio/coin.mp3");
-    bottle = new Audio("assets/audio/bottle.mp3");
+    coin = new Audio("assets/audio/coins.mp3");
+    bottleCollect = new Audio("assets/audio/bottle-1.mp3");
+    hurtMale = new Audio("assets/audio/icons/hurt-male.mp3");
     throwBottle = new Audio("assets/audio/throw-bottle.mp3");
     splash = new Audio("assets/audio/splash.mp3");
     gameOver = new Audio("assets/audio/game-over.mp3");
@@ -24,6 +25,7 @@ class GameSounds {
      */
     constructor() {
         this.getAllSounds().forEach(sound => sound.volume = this.volume);
+        this.steps.loop = true;
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = this.backgroundVolume;
     }
@@ -41,7 +43,8 @@ class GameSounds {
             this.smallChicken,
             this.endboss,
             this.coin,
-            this.bottle,
+            this.bottleCollect,
+            this.hurtMale,
             this.throwBottle,
             this.splash,
             this.gameOver,
@@ -72,10 +75,23 @@ class GameSounds {
     }
 
     /**
-     * Plays the steps sound.
+     * Starts the looping steps sound.
      */
     playSteps() {
-        this.play(this.steps);
+        if (this.muted || !this.steps.paused) return;
+
+        const playPromise = this.steps.play();
+        if (playPromise) {
+            playPromise.catch(() => {});
+        }
+    }
+
+    /**
+     * Stops the looping steps sound.
+     */
+    stopSteps() {
+        this.steps.pause();
+        this.steps.currentTime = 0;
     }
 
     /**
@@ -96,7 +112,14 @@ class GameSounds {
      * Plays the bottle collect sound.
      */
     playBottleCollect() {
-        this.play(this.bottle);
+        this.play(this.bottleCollect);
+    }
+
+    /**
+     * Plays the character hurt sound.
+     */
+    playCharacterHurt() {
+        this.play(this.hurtMale);
     }
 
     /**

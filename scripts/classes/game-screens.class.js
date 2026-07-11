@@ -5,6 +5,7 @@ class GameScreens {
     startImage = new Image();
     winImage = new Image();
     gameOverImage = new Image();
+    instructions;
     isPlayButtonHovered = false;
     isRestartButtonHovered = false;
     isHomeButtonHovered = false;
@@ -34,6 +35,7 @@ class GameScreens {
     constructor(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
+        this.instructions = new GameInstructions(canvas);
         this.loadImages();
     }
 
@@ -56,6 +58,7 @@ class GameScreens {
         }
         this.ctx.drawImage(this.startImage, 0, 0, CANVAS.width, CANVAS.height);
         this.drawPlayButton();
+        this.instructions.draw(this.ctx);
     }
 
     /**
@@ -80,12 +83,14 @@ class GameScreens {
      * @param {MouseEvent} event - The mouse move event
      */
     updatePlayButtonHover(event) {
-        const isHovered = this.isPlayButtonClicked(event);
-        if (this.isPlayButtonHovered === isHovered) {
+        const isHovered = !this.instructions.visible && this.isPlayButtonClicked(event);
+        const playHoverChanged = this.isPlayButtonHovered !== isHovered;
+        const instructionsHoverChanged = this.instructions.updateHover(event);
+        if (!playHoverChanged && !instructionsHoverChanged) {
             return;
         }
         this.isPlayButtonHovered = isHovered;
-        this.canvas.style.cursor = isHovered ? "pointer" : "default";
+        this.canvas.style.cursor = isHovered || this.instructions.isHovered() ? "pointer" : "default";
         this.drawStartScreen();
     }
 
@@ -93,12 +98,28 @@ class GameScreens {
      * Remove the play button hover state.
      */
     clearPlayButtonHover() {
-        if (!this.isPlayButtonHovered) {
+        const instructionsHoverChanged = this.instructions.clearHover();
+        if (!this.isPlayButtonHovered && !instructionsHoverChanged) {
             return;
         }
         this.isPlayButtonHovered = false;
         this.canvas.style.cursor = "default";
         this.drawStartScreen();
+    }
+
+    /**
+     * Handle a click on the start screen instructions UI.
+     * @param {MouseEvent} event - The click event
+     * @returns {boolean} True when the click was handled by the instructions UI
+     */
+    handleInstructionsClick(event) {
+        if (!this.instructions.handleClick(event)) {
+            return false;
+        }
+        this.isPlayButtonHovered = false;
+        this.canvas.style.cursor = "default";
+        this.drawStartScreen();
+        return true;
     }
 
     /**

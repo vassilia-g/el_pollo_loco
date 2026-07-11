@@ -140,6 +140,7 @@ class World {
         }
         if (!this.activeEnemyCollisions.has(chicken)) {
             this.character.hit();
+            this.sounds.playCharacterHurt();
             this.statusBars.setHealth(this.character.health);
         }
         this.activeEnemyCollisions.add(chicken);

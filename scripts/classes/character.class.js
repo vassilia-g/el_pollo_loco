@@ -108,19 +108,36 @@ class Character extends MoveableObject {
      */
     handleMovement() {
         if (this.isDead()) {
+            this.world.sounds.stopSteps();
             return;
         }
+        let isMoving = false;
         const bothHorizontal = this.world.keyboard.LEFT && this.world.keyboard.RIGHT;
         if (!bothHorizontal && this.world.keyboard.LEFT && this.x > -500) {
             this.x -= this.speed;
             this.otherDirection = true;
             this.lastMoveTime = Date.now();
+            isMoving = true;
         }
         if (!bothHorizontal && this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.x += this.speed;
             this.otherDirection = false;
             this.lastMoveTime = Date.now();
+            isMoving = true;
         }
+        this.updateStepSound(isMoving);
+    }
+
+    /**
+     * Play steps while the character is walking on the ground.
+     * @param {boolean} isMoving - Whether the character moved horizontally this frame
+     */
+    updateStepSound(isMoving) {
+        if (isMoving && !this.isJumping) {
+            this.world.sounds.playSteps();
+            return;
+        }
+        this.world.sounds.stopSteps();
     }
 
     /**

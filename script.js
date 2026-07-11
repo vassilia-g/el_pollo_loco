@@ -34,6 +34,9 @@ function init() {
  * @param {MouseEvent} event - The click event
  */
 function startGameOnPlayClick(event) {
+    if (gameScreens.handleInstructionsClick(event)) {
+        return;
+    }
     if (!gameScreens.isPlayButtonClicked(event)) {
         return;
     }
