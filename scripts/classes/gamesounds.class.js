@@ -1,5 +1,4 @@
 class GameSounds {
-    character = new Audio("assets/audio/character.mp3");
     steps = new Audio("assets/audio/steps.mp3");
     jump = new Audio("assets/audio/jump.mp3");
     normalChicken = new Audio("assets/audio/normal-chicken.mp3");
@@ -47,7 +46,7 @@ class GameSounds {
      * @returns {Audio[]} Character sounds
      */
     getCharacterSounds() {
-        return [this.character, this.steps, this.jump, this.hurtMale];
+        return [this.steps, this.jump, this.hurtMale];
     }
 
     /**
@@ -86,13 +85,6 @@ class GameSounds {
         if (playPromise) {
             playPromise.catch(() => {});
         }
-    }
-
-    /**
-     * Plays the character sound.
-     */
-    playCharacter() {
-        this.play(this.character);
     }
 
     /**
