@@ -9,7 +9,7 @@ class GameSounds {
     bottleCollect = new Audio("assets/audio/bottle-1.mp3");
     hurtMale = new Audio("assets/audio/icons/hurt-male.mp3");
     throwBottle = new Audio("assets/audio/throw-bottle.mp3");
-    splash = new Audio("assets/audio/splash.mp3");
+    splash = new Audio("assets/audio/salsa-splat.mp3");
     gameOver = new Audio("assets/audio/game-over.mp3");
     gameWon = new Audio("assets/audio/game-won.mp3");
     backgroundMusic = new Audio("assets/audio/background/sonican-gypsy-tango-acoustic-folk-loop-469606.mp3");
