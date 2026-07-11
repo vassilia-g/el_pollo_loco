@@ -16,13 +16,13 @@ class WorldRenderer {
      */
     drawGameObjects(world) {
         this.ctx.translate(world.camera_x, 0);
-        this.addObjectsToMap(world.level.background);
-        this.addObjectsToMap(world.level.cloud);
-        this.addObjectsToMap(world.level.coins);
-        this.addObjectsToMap(world.level.salsa);
+        this.addObjectsToMap(world.level.background, world.camera_x);
+        this.addObjectsToMap(world.level.cloud, world.camera_x);
+        this.addObjectsToMap(world.level.coins, world.camera_x);
+        this.addObjectsToMap(world.level.salsa, world.camera_x);
         this.addToMap(world.character);
-        this.addObjectsToMap(world.level.chicken);
-        this.addObjectsToMap(world.throwableSalsas);
+        this.addObjectsToMap(world.level.chicken, world.camera_x);
+        this.addObjectsToMap(world.throwableSalsas, world.camera_x);
         this.ctx.translate(-world.camera_x, 0);
     }
 
@@ -44,9 +44,25 @@ class WorldRenderer {
     /**
      * Draw multiple objects on the canvas.
      * @param {MoveableObject[]} objects - The objects to be drawn
+     * @param {number} cameraX - Current horizontal camera offset
      */
-    addObjectsToMap(objects) {
-        objects.forEach(object => this.addToMap(object));
+    addObjectsToMap(objects, cameraX) {
+        objects.forEach(object => {
+            if (this.isInViewport(object, cameraX)) {
+                this.addToMap(object);
+            }
+        });
+    }
+
+    /**
+     * Check whether an object overlaps the visible horizontal canvas area.
+     * @param {MoveableObject} object - The object to check
+     * @param {number} cameraX - Current horizontal camera offset
+     * @returns {boolean} True when the object can be visible
+     */
+    isInViewport(object, cameraX) {
+        const screenX = object.x + cameraX;
+        return object.visible && screenX + object.width >= 0 && screenX <= this.ctx.canvas.width;
     }
 
     /**

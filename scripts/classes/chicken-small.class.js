@@ -20,7 +20,6 @@ class ChickenSmall extends Chicken {
         super().loadImage("assets/graphics/3_enemies_chicken/chicken_small/1_walk/1_w.png");
         this.x = 500 + Math.random() * 2700;
         this.loadImages(this.IMAGES_WALKING);
-        this.animate();
         this.speed = 0.15 + Math.random() * 0.5;
     }
 

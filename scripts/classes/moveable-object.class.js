@@ -39,13 +39,7 @@ class MoveableObject {
      * @param {*} ctx - The canvas context to draw on
      */
     drawFrame(ctx) {
-        if (!this.visible || !this.hasFrame()) {
-            return;
-        }
-        ctx.save();
-        ctx.globalAlpha = this.opacity;
-        this.drawBorder(ctx);
-        ctx.restore();
+        return;
     }
 
     /**
