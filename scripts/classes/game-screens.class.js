@@ -31,10 +31,12 @@ class GameScreens {
     /**
      * Create the screen helper and preload screen images.
      * @param {HTMLCanvasElement} canvas - The game canvas
+     * @param {CanvasMuteButton} muteButton - The canvas mute button
      */
-    constructor(canvas) {
+    constructor(canvas, muteButton) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
+        this.muteButton = muteButton;
         this.instructions = new GameInstructions(canvas);
         this.loadImages();
     }
@@ -59,6 +61,7 @@ class GameScreens {
         this.ctx.drawImage(this.startImage, 0, 0, CANVAS.width, CANVAS.height);
         this.drawPlayButton();
         this.instructions.draw(this.ctx);
+        this.drawMuteButton(this.ctx);
     }
 
     /**
@@ -90,7 +93,7 @@ class GameScreens {
             return;
         }
         this.isPlayButtonHovered = isHovered;
-        this.canvas.style.cursor = isHovered || this.instructions.isHovered() ? "pointer" : "default";
+        this.updateCursor(isHovered || this.instructions.isHovered());
         this.drawStartScreen();
     }
 
@@ -103,7 +106,7 @@ class GameScreens {
             return;
         }
         this.isPlayButtonHovered = false;
-        this.canvas.style.cursor = "default";
+        this.updateCursor(false);
         this.drawStartScreen();
     }
 
@@ -117,7 +120,7 @@ class GameScreens {
             return false;
         }
         this.isPlayButtonHovered = false;
-        this.canvas.style.cursor = "default";
+        this.updateCursor(false);
         this.drawStartScreen();
         return true;
     }
@@ -159,13 +162,23 @@ class GameScreens {
             this.drawOverlay(ctx);
             ctx.drawImage(this.gameOverImage, (CANVAS.width - 600) / 2, (CANVAS.height - 400) / 2, 600, 400);
             this.drawRestartButton(ctx);
+            this.drawMuteButton(ctx);
             return;
         }
         if (gameWon) {
             this.drawWinOverlay(ctx);
             ctx.drawImage(this.winImage, (CANVAS.width - 500) / 2, (CANVAS.height - 450) / 2, 500, 450);
             this.drawHomeButton(ctx);
+            this.drawMuteButton(ctx);
         }
+    }
+
+    /**
+     * Draw the canvas mute button when one is available.
+     * @param {CanvasRenderingContext2D} ctx - The canvas context
+     */
+    drawMuteButton(ctx) {
+        this.muteButton?.draw(ctx, isMuted);
     }
 
     /**
@@ -210,7 +223,7 @@ class GameScreens {
             return;
         }
         this.isRestartButtonHovered = isHovered;
-        this.canvas.style.cursor = isHovered ? "pointer" : "default";
+        this.updateCursor(isHovered);
         this.drawEndScreen(ctx, false, true);
     }
 
@@ -223,7 +236,7 @@ class GameScreens {
             return;
         }
         this.isRestartButtonHovered = false;
-        this.canvas.style.cursor = "default";
+        this.updateCursor(false);
         this.drawEndScreen(ctx, false, true);
     }
 
@@ -271,7 +284,7 @@ class GameScreens {
             return;
         }
         this.isHomeButtonHovered = isHovered;
-        this.canvas.style.cursor = isHovered ? "pointer" : "default";
+        this.updateCursor(isHovered);
         this.drawEndScreen(ctx, true, false);
     }
 
@@ -284,8 +297,16 @@ class GameScreens {
             return;
         }
         this.isHomeButtonHovered = false;
-        this.canvas.style.cursor = "default";
+        this.updateCursor(false);
         this.drawEndScreen(ctx, true, false);
+    }
+
+    /**
+     * Set the canvas cursor for visible controls.
+     * @param {boolean} isHovered - Whether a screen control is hovered
+     */
+    updateCursor(isHovered) {
+        this.canvas.style.cursor = isHovered || this.muteButton?.isHovered ? "pointer" : "default";
     }
 
     /**

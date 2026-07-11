@@ -34,37 +34,6 @@ canvas {
     display: none;
 }
 
-.mute-button {
-    position: fixed;
-    top: 18px;
-    right: 18px;
-    z-index: 6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    border: 2px solid rgba(255, 255, 255, 0.85);
-    border-radius: 50%;
-    background: rgba(43, 22, 0, 0.42);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-.mute-button img {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-.mute-button:active {
-    transform: scale(0.95);
-}
-
 @media (max-width: 900px) and (orientation: portrait) {
     canvas {
         visibility: hidden;

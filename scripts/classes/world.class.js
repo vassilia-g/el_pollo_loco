@@ -26,11 +26,13 @@ class World {
      * @param {HTMLCanvasElement} canvas - The canvas element where the game will be drawn
      * @param {Keyboard} keyboard - The keyboard instance to handle input
      * @param {GameScreens} gameScreens - The helper that draws start and end screens
+     * @param {CanvasMuteButton} muteButton - The canvas mute button
      */
-    constructor(canvas, keyboard, gameScreens) {
+    constructor(canvas, keyboard, gameScreens, muteButton) {
         this.ctx = canvas.getContext("2d");
         this.keyboard = keyboard;
         this.gameScreens = gameScreens;
+        this.muteButton = muteButton;
         this.connectCharacterToWorld();
         this.sounds.playBackgroundMusic();
         this.draw();
@@ -315,6 +317,7 @@ class World {
         this.checkEndbossActivation();
         this.statusBars.draw(this.ctx, this);
         this.drawEndScreen();
+        this.muteButton.draw(this.ctx, isMuted);
         this.animationFrameId = requestAnimationFrame(() => this.draw());
     }
 

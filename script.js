@@ -2,31 +2,30 @@ const CANVAS = document.querySelector("canvas");
 const MOBILE_JOYSTICK = document.getElementById("mobileJoystick");
 const MOBILE_JOYSTICK_KNOB = document.getElementById("mobileJoystickKnob");
 const MOBILE_THROW_BUTTON = document.getElementById("mobileThrowButton");
-const MUTE_BUTTON = document.getElementById("muteButton");
-const MUTE_BUTTON_ICON = document.getElementById("muteButtonIcon");
-const SOUND_ICON = "assets/audio/icons/volume-svgrepo-com.svg";
-const MUTED_ICON = "assets/audio/icons/volume-muted-svgrepo-com.svg";
 const MUTE_STORAGE_KEY = "elPolloLocoMuted";
 let world;
 let gameScreens;
+let canvasMuteButton;
 let KEYBOARD = new Keyboard();
 let isMuted = localStorage.getItem(MUTE_STORAGE_KEY) === "true";
 
-CANVAS.width = 960;
-CANVAS.height = 540;
+CANVAS.width = 960; CANVAS.height = 540;
 
 /**
  * Initialize the start screen.
  */
 function init() {
-    gameScreens = new GameScreens(CANVAS);
+    canvasMuteButton = new CanvasMuteButton(CANVAS);
+    canvasMuteButton.onIconLoad = redrawVisibleScreen;
+    gameScreens = new GameScreens(CANVAS, canvasMuteButton);
     gameScreens.drawStartScreen();
+    CANVAS.addEventListener("click", toggleMuteOnCanvasClick);
     CANVAS.addEventListener("click", startGameOnPlayClick);
+    CANVAS.addEventListener("mousemove", updateMuteButtonHover);
     CANVAS.addEventListener("mousemove", updatePlayButtonHover);
+    CANVAS.addEventListener("mouseleave", clearMuteButtonHover);
     CANVAS.addEventListener("mouseleave", clearPlayButtonHover);
     bindMobileControls();
-    bindMuteButton();
-    updateMuteButtonIcon();
 }
 
 /**
@@ -59,33 +58,41 @@ function startGameOnPlayClick(event) {
 function startGame() {
     KEYBOARD = new Keyboard();
     showMobileControls();
-    world = new World(CANVAS, KEYBOARD, gameScreens);
+    world = new World(CANVAS, KEYBOARD, gameScreens, canvasMuteButton);
     applyMuteState();
 }
 
-/**
- * Bind the mute button to the current and future game sounds.
- */
-function bindMuteButton() {
-    if (!MUTE_BUTTON || !MUTE_BUTTON_ICON) {
+function toggleMuteOnCanvasClick(event) {
+    if (!canvasMuteButton.isClicked(event)) {
         return;
     }
-    MUTE_BUTTON.addEventListener("pointerdown", preventButtonFocus);
-    MUTE_BUTTON.addEventListener("click", toggleMute);
+    event.stopImmediatePropagation();
+    toggleMute();
+    redrawVisibleScreen();
 }
 
-/**
- * Toggle sound playback and switch the mute button icon.
- */
+function updateMuteButtonHover(event) {
+    if (!canvasMuteButton.updateHover(event)) {
+        return;
+    }
+    updateCanvasCursor();
+    redrawVisibleScreen();
+}
+
+function clearMuteButtonHover() {
+    if (!canvasMuteButton.clearHover()) {
+        return;
+    }
+    updateCanvasCursor();
+    redrawVisibleScreen();
+}
+
 function toggleMute() {
-    MUTE_BUTTON?.blur();
     isMuted = !isMuted;
     localStorage.setItem(MUTE_STORAGE_KEY, String(isMuted));
     if (world) {
-        world.sounds.toggleMute();
         applyMuteState();
     }
-    updateMuteButtonIcon();
 }
 
 /**
@@ -99,15 +106,17 @@ function applyMuteState() {
     world.sounds.getAllSounds().forEach(sound => sound.muted = isMuted);
 }
 
-/**
- * Show the matching sound icon for the current mute state.
- */
-function updateMuteButtonIcon() {
-    if (!MUTE_BUTTON || !MUTE_BUTTON_ICON) {
+function redrawVisibleScreen() {
+    if (!gameScreens) {
         return;
     }
-    MUTE_BUTTON_ICON.src = isMuted ? MUTED_ICON : SOUND_ICON;
-    MUTE_BUTTON.setAttribute("aria-label", isMuted ? "Ton einschalten" : "Ton ausschalten");
+    if (!world) {
+        gameScreens.drawStartScreen();
+    }
+}
+
+function updateCanvasCursor() {
+    CANVAS.style.cursor = canvasMuteButton.isHovered ? "pointer" : "default";
 }
 
 /**
