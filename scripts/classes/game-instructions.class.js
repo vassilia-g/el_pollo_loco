@@ -1,80 +1,53 @@
 /**
- * Draws and handles the start screen instructions dialog.
+ * Draws start-screen info buttons and controls their DOM dialog.
  */
 class GameInstructions {
     visible = false;
     activeDialog = "instructions";
     isHelpButtonHovered = false;
     isImprintButtonHovered = false;
-    isCloseButtonHovered = false;
-    helpButton = {
-        x: 20,
-        y: 20,
-        width: 180,
-        height: 60
-    };
-    imprintButton = {
-        x: 20,
-        y: 90,
-        width: 180,
-        height: 50
-    };
-    closeButton = {
-        x: 667,
-        y: 84,
-        width: 110,
-        height: 42
-    };
-    dialog = {
-        x: 170,
-        y: 70,
-        width: 620,
-        height: 390
-    };
+    helpButton = { x: 20, y: 20, width: 180, height: 60 };
+    imprintButton = { x: 20, y: 90, width: 180, height: 50 };
 
     /**
-     * Create the instructions helper.
+     * Create the instructions helper and connect its DOM elements.
      * @param {HTMLCanvasElement} canvas - The game canvas
      */
     constructor(canvas) {
         this.canvas = canvas;
+        this.overlay = document.getElementById("gameInfoOverlay");
+        this.title = document.getElementById("gameInfoTitle");
+        this.closeButton = document.getElementById("gameInfoClose");
+        this.howToPlayContent = document.getElementById("howToPlayContent");
+        this.imprintContent = document.getElementById("imprintContent");
+        this.bindDialogEvents();
     }
 
     /**
-     * Draw the help button and, when open, the instructions dialog.
+     * Bind close, backdrop and keyboard events for the DOM dialog.
+     */
+    bindDialogEvents() {
+        this.closeButton.addEventListener("click", () => this.closeDialog());
+        this.overlay.addEventListener("click", event => this.closeOnBackdrop(event));
+        document.addEventListener("keydown", event => this.closeOnEscape(event));
+    }
+
+    /**
+     * Draw both information buttons on the start screen.
      * @param {CanvasRenderingContext2D} ctx - The canvas context
      */
     draw(ctx) {
-        this.drawHelpButton(ctx);
-        this.drawImprintButton(ctx);
-        if (this.visible) {
-            this.drawDialog(ctx);
-        }
-    }
-
-    /**
-     * Draw the help button on the start screen.
-     * @param {CanvasRenderingContext2D} ctx - The canvas context
-     */
-    drawHelpButton(ctx) {
         this.drawStartButton(ctx, this.helpButton, "HOW TO PLAY", this.isHelpButtonHovered, 24);
-    }
-
-    /**
-     * Draw the imprint button on the start screen.
-     * @param {CanvasRenderingContext2D} ctx - The canvas context
-     */
-    drawImprintButton(ctx) {
         this.drawStartButton(ctx, this.imprintButton, "IMPRINT", this.isImprintButtonHovered, 23);
     }
 
     /**
-     * Draw one start screen dialog button.
+     * Draw one start-screen information button.
      * @param {CanvasRenderingContext2D} ctx - The canvas context
      * @param {{x: number, y: number, width: number, height: number}} button - Button rectangle
      * @param {string} label - Button label
      * @param {boolean} isHovered - Whether the button is hovered
-     * @param {number} fontSize - Font size in pixels
+     * @param {number} fontSize - Font size in canvas pixels
      */
     drawStartButton(ctx, button, label, isHovered, fontSize) {
         ctx.save();
@@ -92,187 +65,14 @@ class GameInstructions {
     }
 
     /**
-     * Draw the open instructions dialog.
-     * @param {CanvasRenderingContext2D} ctx - The canvas context
-     */
-    drawDialog(ctx) {
-        const dialog = this.dialog;
-        ctx.save();
-        ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
-        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        ctx.fillStyle = "rgba(255, 244, 204, 0.97)";
-        ctx.strokeStyle = "#8b2d12";
-        ctx.lineWidth = 4;
-        ctx.fillRect(dialog.x, dialog.y, dialog.width, dialog.height);
-        ctx.strokeRect(dialog.x, dialog.y, dialog.width, dialog.height);
-        this.drawText(ctx);
-        this.drawCloseButton(ctx);
-        ctx.restore();
-    }
-
-    /**
-     * Draw the instructions text.
-     * @param {CanvasRenderingContext2D} ctx - The canvas context
-     */
-    drawText(ctx) {
-        ctx.fillStyle = "#8b2d12";
-        ctx.font = this.activeDialog === "imprint" ? "30px Arial" : "34px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(this.getDialogTitle(), this.dialog.x + this.dialog.width / 2, 125);
-        ctx.font = this.activeDialog === "imprint" ? "15px Arial" : "22px Arial";
-        ctx.textAlign = "left";
-        this.getDialogLines().forEach((line, index) => {
-            ctx.fillText(line, this.dialog.x + 55, this.getTextStartY() + index * this.getLineHeight());
-        });
-    }
-
-    /**
-     * Return the first text line y-position for the open dialog.
-     * @returns {number} Start y-position
-     */
-    getTextStartY() {
-        return this.activeDialog === "imprint" ? 152 : 180;
-    }
-
-    /**
-     * Return the text line height for the open dialog.
-     * @returns {number} Text line height
-     */
-    getLineHeight() {
-        return this.activeDialog === "imprint" ? 19 : 36;
-    }
-
-    /**
-     * Return the title for the open dialog.
-     * @returns {string} Dialog title
-     */
-    getDialogTitle() {
-        return this.activeDialog === "imprint" ? "Imprint" : "How to Play";
-    }
-
-    /**
-     * Return the text lines for the open dialog.
-     * @returns {string[]} Dialog lines
-     */
-    getDialogLines() {
-        if (this.activeDialog === "imprint") {
-            return this.getImprintLines();
-        }
-        return this.getInstructionLines();
-    }
-
-    /**
-     * Return the instructions shown inside the dialog.
-     * @returns {string[]} Lines of instructions
-     */
-    getInstructionLines() {
-        return [
-            "A / Left Arrow: Move left",
-            "D / Right Arrow: Move right",
-            "W / Up Arrow: Jump",
-            "Space: Throw a salsa bottle",
-            "Collect coins and salsa bottles.",
-            "Jump on chickens or hit enemies with bottles.",
-            "Defeat the endboss to win the level."
-        ];
-    }
-
-    /**
-     * Return the imprint text shown inside the dialog.
-     * @returns {string[]} Lines of imprint text
-     */
-    getImprintLines() {
-        return this.getImprintOwnerLines()
-            .concat(this.getImprintProjectLines())
-            .concat(this.getImprintAudioLines());
-    }
-
-    /**
-     * Return legal owner lines for the imprint.
-     * @returns {string[]} Legal owner lines
-     */
-    getImprintOwnerLines() {
-        return [
-            "Legal Notice",
-            "",
-            "Vassilia Gerodimos",
-            "Mörfelder Landstraße 62",
-            "Email: vassilia@gerodimos.com",
-            ""
-        ];
-    }
-
-    /**
-     * Return project context lines for the imprint.
-     * @returns {string[]} Project context lines
-     */
-    getImprintProjectLines() {
-        return [
-            "Project",
-            "This game was created as part of a Developer Akademie module.",
-            ""
-        ];
-    }
-
-    /**
-     * Return audio credit lines for the imprint.
-     * @returns {string[]} Audio credit lines
-     */
-    getImprintAudioLines() {
-        return [
-            "Audio Credits",
-            "Original sound effects by Vassilia Gerodimos:",
-            "throw bottle, footsteps, chickens, endboss, jump,",
-            "coins and salsa bottles.",
-            "Additional sound effects downloaded from Pixabay."
-        ];
-    }
-
-    /**
-     * Draw the close button inside the dialog.
-     * @param {CanvasRenderingContext2D} ctx - The canvas context
-     */
-    drawCloseButton(ctx) {
-        const button = this.closeButton;
-        ctx.fillStyle = this.isCloseButtonHovered ? "#ffe066" : "#ffcc01";
-        ctx.strokeStyle = this.isCloseButtonHovered ? "#ffffff" : "#8b2d12";
-        ctx.lineWidth = 2;
-        ctx.fillRect(button.x, button.y, button.width, button.height);
-        ctx.strokeRect(button.x, button.y, button.width, button.height);
-        ctx.fillStyle = "#8b2d12";
-        ctx.font = "22px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("CLOSE", button.x + button.width / 2, button.y + button.height / 2);
-    }
-
-    /**
-     * Handle a start screen click that may belong to the instructions UI.
+     * Handle a canvas click on an information button.
      * @param {MouseEvent} event - The click event
-     * @returns {boolean} True when the click was handled or blocked by the dialog
+     * @returns {boolean} Whether an information button handled the click
      */
     handleClick(event) {
         if (this.visible) {
-            this.updateVisibleDialog(event);
             return true;
         }
-        return this.openStartDialog(event);
-    }
-
-    /**
-     * Keep or close the currently visible dialog after a click.
-     * @param {MouseEvent} event - The click event
-     */
-    updateVisibleDialog(event) {
-        this.visible = this.isDialogClicked(event) && !this.isCloseButtonClicked(event);
-    }
-
-    /**
-     * Open a start screen dialog when its button is clicked.
-     * @param {MouseEvent} event - The click event
-     * @returns {boolean} True when a dialog was opened
-     */
-    openStartDialog(event) {
         if (this.isHelpButtonClicked(event)) {
             return this.openDialog("instructions");
         }
@@ -283,105 +83,107 @@ class GameInstructions {
     }
 
     /**
-     * Open the selected dialog.
+     * Open the selected DOM dialog content.
      * @param {string} dialog - Dialog id
      * @returns {boolean} Always true after opening
      */
     openDialog(dialog) {
         this.visible = true;
         this.activeDialog = dialog;
+        const showsImprint = dialog === "imprint";
+        this.title.textContent = showsImprint ? "Imprint" : "How to Play";
+        this.howToPlayContent.hidden = showsImprint;
+        this.imprintContent.hidden = !showsImprint;
+        this.overlay.hidden = false;
+        this.closeButton.focus();
         return true;
     }
 
     /**
-     * Update hover states for the instructions UI.
+     * Close the DOM dialog and clear its visible state.
+     */
+    closeDialog() {
+        this.visible = false;
+        this.overlay.hidden = true;
+    }
+
+    /**
+     * Close the dialog when the backdrop itself is clicked.
+     * @param {MouseEvent} event - The backdrop click
+     */
+    closeOnBackdrop(event) {
+        if (event.target === this.overlay) {
+            this.closeDialog();
+        }
+    }
+
+    /**
+     * Close the dialog when Escape is pressed.
+     * @param {KeyboardEvent} event - The keyboard event
+     */
+    closeOnEscape(event) {
+        if (this.visible && event.key === "Escape") {
+            this.closeDialog();
+        }
+    }
+
+    /**
+     * Update hover states for the two canvas buttons.
      * @param {MouseEvent} event - The mouse move event
-     * @returns {boolean} True when a hover state changed
+     * @returns {boolean} Whether a hover state changed
      */
     updateHover(event) {
         const wasHelpHovered = this.isHelpButtonHovered;
         const wasImprintHovered = this.isImprintButtonHovered;
-        const wasCloseHovered = this.isCloseButtonHovered;
         this.isHelpButtonHovered = !this.visible && this.isHelpButtonClicked(event);
         this.isImprintButtonHovered = !this.visible && this.isImprintButtonClicked(event);
-        this.isCloseButtonHovered = this.visible && this.isCloseButtonClicked(event);
         return wasHelpHovered !== this.isHelpButtonHovered ||
-               wasImprintHovered !== this.isImprintButtonHovered ||
-               wasCloseHovered !== this.isCloseButtonHovered;
+               wasImprintHovered !== this.isImprintButtonHovered;
     }
 
     /**
-     * Clear instruction hover states.
-     * @returns {boolean} True when a hover state changed
+     * Clear information-button hover states.
+     * @returns {boolean} Whether a hover state changed
      */
     clearHover() {
-        const hadHover = this.isHelpButtonHovered || this.isImprintButtonHovered || this.isCloseButtonHovered;
+        const hadHover = this.isHovered();
         this.isHelpButtonHovered = false;
         this.isImprintButtonHovered = false;
-        this.isCloseButtonHovered = false;
         return hadHover;
     }
 
     /**
-     * Check whether the instructions UI is currently hovered.
-     * @returns {boolean} True when a visible instructions button is hovered
+     * Check whether either information button is hovered.
+     * @returns {boolean} Whether an information button is hovered
      */
     isHovered() {
-        return this.isHelpButtonHovered || this.isImprintButtonHovered || this.isCloseButtonHovered;
+        return this.isHelpButtonHovered || this.isImprintButtonHovered;
     }
 
-    /**
-     * Check whether a click is inside the help button.
-     * @param {MouseEvent} event - The click event
-     * @returns {boolean} True when the help button was clicked
-     */
+    /** @param {MouseEvent} event - Click event. @returns {boolean} Whether Help was clicked. */
     isHelpButtonClicked(event) {
         return this.isPositionInsideButton(this.getCanvasClickPosition(event), this.helpButton);
     }
 
-    /**
-     * Check whether a click is inside the imprint button.
-     * @param {MouseEvent} event - The click event
-     * @returns {boolean} True when the imprint button was clicked
-     */
+    /** @param {MouseEvent} event - Click event. @returns {boolean} Whether Imprint was clicked. */
     isImprintButtonClicked(event) {
         return this.isPositionInsideButton(this.getCanvasClickPosition(event), this.imprintButton);
-    }
-
-    /**
-     * Check whether a click is inside the open dialog.
-     * @param {MouseEvent} event - The click event
-     * @returns {boolean} True when the dialog was clicked
-     */
-    isDialogClicked(event) {
-        return this.isPositionInsideButton(this.getCanvasClickPosition(event), this.dialog);
-    }
-
-    /**
-     * Check whether a click is inside the close button.
-     * @param {MouseEvent} event - The click event
-     * @returns {boolean} True when the close button was clicked
-     */
-    isCloseButtonClicked(event) {
-        return this.isPositionInsideButton(this.getCanvasClickPosition(event), this.closeButton);
     }
 
     /**
      * Check whether a canvas position is inside a button.
      * @param {{x: number, y: number}} position - Canvas position
      * @param {{x: number, y: number, width: number, height: number}} button - Button rectangle
-     * @returns {boolean} True when the position is inside the button
+     * @returns {boolean} Whether the position is inside the button
      */
     isPositionInsideButton(position, button) {
-        return position.x >= button.x &&
-               position.x <= button.x + button.width &&
-               position.y >= button.y &&
-               position.y <= button.y + button.height;
+        return position.x >= button.x && position.x <= button.x + button.width &&
+               position.y >= button.y && position.y <= button.y + button.height;
     }
 
     /**
      * Convert browser click coordinates to canvas coordinates.
-     * @param {MouseEvent} event - The click event
+     * @param {MouseEvent} event - The pointer event
      * @returns {{x: number, y: number}} Canvas click coordinates
      */
     getCanvasClickPosition(event) {

@@ -11,6 +11,35 @@
 <body onload="init()">
 
     <canvas></canvas>
+    <div class="game-info-overlay" id="gameInfoOverlay" hidden>
+        <div class="game-info-dialog" role="dialog" aria-modal="true" aria-labelledby="gameInfoTitle">
+            <button class="game-info-close" id="gameInfoClose" type="button" aria-label="Dialog schließen">×</button>
+            <h2 id="gameInfoTitle">How to Play</h2>
+
+            <div class="game-info-content" id="howToPlayContent">
+                <ul>
+                    <li><strong>A / Left Arrow:</strong> Move left</li>
+                    <li><strong>D / Right Arrow:</strong> Move right</li>
+                    <li><strong>W / Up Arrow:</strong> Jump</li>
+                    <li><strong>Space:</strong> Throw a salsa bottle</li>
+                </ul>
+                <p>Collect coins and salsa bottles.</p>
+                <p>Jump on chickens or hit enemies with bottles.</p>
+                <p>Defeat the endboss to win the level.</p>
+            </div>
+
+            <div class="game-info-content" id="imprintContent" hidden>
+                <h3>Legal Notice</h3>
+                <p>Vassilia Gerodimos<br>Mörfelder Landstraße 62</p>
+                <p>Email: <a href="mailto:vassilia@gerodimos.com">vassilia@gerodimos.com</a></p>
+                <h3>Project</h3>
+                <p>This game was created as part of a Developer Akademie module.</p>
+                <h3>Audio Credits</h3>
+                <p>Original sound effects by Vassilia Gerodimos: throw bottle, footsteps, chickens, endboss, jump, coins and salsa bottles.</p>
+                <p>Additional sound effects downloaded from Pixabay.</p>
+            </div>
+        </div>
+    </div>
     <div class="rotate-device-message">
         <span class="rotate-device-icon">↻</span>
         <p>Bitte Handy drehen</p>

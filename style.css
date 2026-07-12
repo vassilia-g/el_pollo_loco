@@ -26,6 +26,105 @@ canvas {
     background: black;
 }
 
+.game-info-overlay {
+    position: fixed;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100vw, calc(100dvh * 16 / 9));
+    max-width: 100vw;
+    max-height: 100dvh;
+    aspect-ratio: 16 / 9;
+    padding: 20px;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.6);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.game-info-overlay[hidden],
+.game-info-content[hidden] {
+    display: none;
+}
+
+.game-info-dialog {
+    position: relative;
+    width: min(620px, 100%);
+    max-height: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 28px 42px 32px;
+    border: 4px solid #8b2d12;
+    color: #8b2d12;
+    background: rgba(255, 244, 204, 0.98);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.game-info-dialog h2 {
+    margin: 0 42px 20px;
+    font-size: 30px;
+    text-align: center;
+}
+
+.game-info-dialog h3 {
+    margin: 20px 0 4px;
+    font-size: 18px;
+}
+
+.game-info-dialog p,
+.game-info-dialog ul {
+    margin: 8px 0;
+}
+
+.game-info-dialog ul {
+    padding-left: 24px;
+}
+
+.game-info-dialog a {
+    color: #8b2d12;
+    font-weight: 700;
+}
+
+.game-info-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 2px solid #8b2d12;
+    border-radius: 4px;
+    color: #8b2d12;
+    background: #ffcc01;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.game-info-close:hover,
+.game-info-close:focus-visible {
+    outline: 3px solid #ffffff;
+    background: #ffe066;
+}
+
+@media (max-height: 500px) {
+    .game-info-overlay {
+        padding: 12px;
+    }
+
+    .game-info-dialog {
+        padding: 20px 32px 24px;
+    }
+
+    .game-info-dialog h2 {
+        margin-bottom: 12px;
+        font-size: 26px;
+    }
+}
+
 .rotate-device-message {
     display: none;
 }
