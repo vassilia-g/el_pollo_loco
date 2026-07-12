@@ -98,7 +98,6 @@ class Character extends MoveableObject {
             this.applyGravity();
             this.updateCamera();
         }, 1000 / 60);
-
         this.setManagedInterval(() => {
             lastAnimation = this.updateAnimation(lastAnimation);
         }, 100);
@@ -147,16 +146,15 @@ class Character extends MoveableObject {
         this.lastMoveTime = Date.now();
         return true;
     }
-
     /** @param {boolean} isMoving - Whether Pepe moved horizontally this frame. */
     updateStepSound(isMoving) {
         if (isMoving && !this.isJumping) {
+            this.world.sounds.stopSnoring();
             this.world.sounds.playSteps();
             return;
         }
         this.world.sounds.stopSteps();
     }
-
     /** Handle jump input. */
     handleJumpInput() {
         if (this.isDead()) {
@@ -167,10 +165,10 @@ class Character extends MoveableObject {
             this.world.keyboard.UP_PRESSED = false;
         }
     }
-
     /** Make the character jump. */
     jump() {
         if (!this.isJumping) {
+            this.world.sounds.stopSnoring();
             this.speedY = -this.jumpSpeed;
             this.isJumping = true;
             this.lastMoveTime = Date.now();
@@ -247,6 +245,7 @@ class Character extends MoveableObject {
     /** Damage the character and wake him from long idle. */
     hit() {
         super.hit();
+        this.world.sounds.stopSnoring();
         this.lastMoveTime = Date.now();
     }
 
@@ -377,6 +376,7 @@ class Character extends MoveableObject {
     playLongIdleAnimation(lastAnimation) {
         if (lastAnimation !== 'long_idle') {
             this.currentImage = 0;
+            this.world.sounds.playSnoring();
             lastAnimation = 'long_idle';
         }
         this.playAnimation(this.IMAGES_LONG_IDLE);

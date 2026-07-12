@@ -10,6 +10,7 @@ class GameSounds {
     coin = new Audio("assets/audio/coins.mp3");
     bottleCollect = new Audio("assets/audio/bottle-1.mp3");
     hurtMale = new Audio("assets/audio/icons/hurt-male.mp3");
+    snoring = new Audio("assets/audio/snoring.mp3");
     throwBottle = new Audio("assets/audio/throw-bottle.mp3");
     splash = new Audio("assets/audio/salsa-splat.mp3");
     gameOver = new Audio("assets/audio/game-over.mp3");
@@ -18,7 +19,9 @@ class GameSounds {
 
     muted = false;
     volume = 0.5;
+    snoringVolume = 1.0;
     backgroundVolume = 0.10;
+    snoringBackgroundVolume = 0.02;
     endbossLoopInterval;
     endbossLoopDelay = 2500;
 
@@ -28,6 +31,9 @@ class GameSounds {
     constructor() {
         this.getAllSounds().forEach(sound => sound.volume = this.volume);
         this.steps.loop = true;
+        this.snoring.loop = true;
+        this.snoring.preload = "auto";
+        this.snoring.volume = this.snoringVolume;
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = this.backgroundVolume;
     }
@@ -49,7 +55,7 @@ class GameSounds {
      * @returns {Audio[]} Character sounds
      */
     getCharacterSounds() {
-        return [this.steps, this.jump, this.hurtMale];
+        return [this.steps, this.jump, this.hurtMale, this.snoring];
     }
 
     /**
@@ -108,6 +114,29 @@ class GameSounds {
     stopSteps() {
         this.steps.pause();
         this.steps.currentTime = 0;
+    }
+
+    /**
+     * Start the snoring loop while the character is in long idle.
+     */
+    playSnoring() {
+        if (this.muted || !this.snoring.paused) {
+            return;
+        }
+        this.backgroundMusic.volume = this.snoringBackgroundVolume;
+        const playPromise = this.snoring.play();
+        if (playPromise) {
+            playPromise.catch(() => this.stopSnoring());
+        }
+    }
+
+    /**
+     * Stop snoring, reset it and restore the background music volume.
+     */
+    stopSnoring() {
+        this.snoring.pause();
+        this.snoring.currentTime = 0;
+        this.backgroundMusic.volume = this.backgroundVolume;
     }
 
     /**
@@ -264,6 +293,7 @@ class GameSounds {
     setVolume(volume) {
         this.volume = Math.min(Math.max(volume, 0), 1);
         this.getAllSounds().forEach(sound => sound.volume = this.volume);
+        this.snoring.volume = Math.min(this.volume * 2, 1);
         this.backgroundMusic.volume = this.backgroundVolume;
     }
 
