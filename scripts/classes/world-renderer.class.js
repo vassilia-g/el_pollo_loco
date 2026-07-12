@@ -17,6 +17,10 @@ class WorldRenderer {
     drawGameObjects(world) {
         this.ctx.translate(world.camera_x, 0);
         this.addObjectsToMap(world.level.background, world.camera_x);
+        if (world.isGameOver()) {
+            this.ctx.translate(-world.camera_x, 0);
+            return;
+        }
         this.addObjectsToMap(world.level.cloud, world.camera_x);
         this.addObjectsToMap(world.level.coins, world.camera_x);
         this.addObjectsToMap(world.level.salsa, world.camera_x);

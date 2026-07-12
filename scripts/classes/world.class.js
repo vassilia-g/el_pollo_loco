@@ -19,7 +19,7 @@ class World {
     collisionIntervals = [];
     animationFrameId;
     stopped = false;
-    /**x
+    /**
      * The constructor of the World class. It initializes the canvas context and starts the drawing loop.
      * @param {HTMLCanvasElement} canvas - The canvas element where the game will be drawn
      * @param {Keyboard} keyboard - The keyboard instance to handle input
@@ -37,7 +37,6 @@ class World {
         this.draw();
         this.checkCollisions();
     }
-
     /**
      * Give the character access to keyboard, level and camera data in this world.
      */
@@ -95,6 +94,7 @@ class World {
         this.keyboard.block();
         hideMobileControls();
         this.getEndboss()?.stopAtGameEnd(this.gameWon);
+        this.destroyGameObjects();
     }
     /** @returns {Endboss|undefined} The level endboss. */
     getEndboss() {
@@ -373,7 +373,7 @@ class World {
      */
     checkEndbossActivation() {
         const endboss = this.getEndboss();
-        if (!endboss || this.endbossActivated || endboss.isDead()) {
+        if (!endboss || this.isGameOver() || this.endbossActivated || endboss.isDead()) {
             return;
         }
         if (endboss.x + this.camera_x <= CANVAS.width - 100) {

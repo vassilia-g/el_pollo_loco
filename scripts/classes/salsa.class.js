@@ -5,7 +5,7 @@ class Salsa extends MoveableObject {
     width = 60;
     height = 60;
     y = 412;
-    collectionOffset = { top: 5, right: 25, bottom: 5, left: 25 };
+    collectionOffset = { top: 5, right: 29, bottom: 5, left: 29 };
     isThrown = false;
     splashing = false;
     sounds;
@@ -45,7 +45,7 @@ class Salsa extends MoveableObject {
     throw(direction) {
         this.isThrown = true;
         this.speedY = -15;
-        this.speedX = direction * 12;
+        this.speedX = direction * 3;
         this.currentImage = 0;
         this.startThrowMovement();
         this.startRotationAnimation();
