@@ -19,6 +19,7 @@ class World {
     collisionIntervals = [];
     animationFrameId;
     stopped = false;
+    lastSalsaThrowAt = 0;
     /**
      * The constructor of the World class. It initializes the canvas context and starts the drawing loop.
      * @param {HTMLCanvasElement} canvas - The canvas element where the game will be drawn
@@ -37,6 +38,7 @@ class World {
         this.draw();
         this.checkCollisions();
     }
+
     /**
      * Give the character access to keyboard, level and camera data in this world.
      */
@@ -96,6 +98,7 @@ class World {
         this.getEndboss()?.stopAtGameEnd(this.gameWon);
         this.destroyGameObjects();
     }
+
     /** @returns {Endboss|undefined} The level endboss. */
     getEndboss() {
         return this.level.chicken.find(enemy => enemy instanceof Endboss);
@@ -231,7 +234,7 @@ class World {
         if (!this.keyboard.SPACE_PRESSED) {
             return;
         }
-        if (this.collectedBottles > 0) {
+        if (this.collectedBottles > 0 && Date.now() - this.lastSalsaThrowAt >= 1000) {
             this.throwSalsa();
         }
         this.keyboard.SPACE_PRESSED = false;
@@ -241,6 +244,7 @@ class World {
      * Create and launch a throwable salsa bottle.
      */
     throwSalsa() {
+        this.lastSalsaThrowAt = Date.now();
         const direction = this.character.otherDirection ? -1 : 1;
         const x = this.character.x + (direction === 1 ? this.character.width - 20 : -20);
         const bottle = new Salsa("assets/graphics/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png", x);

@@ -176,6 +176,7 @@ function restartGameOnClick(event) {
     gameScreens.clearRestartButtonHover(world.ctx);
     startGame();
 }
+
 /**
  * Reload the page from the win screen to return home.
  * @param {MouseEvent} event - The click event
@@ -270,6 +271,7 @@ function bindMobileJoystick() {
     MOBILE_JOYSTICK.addEventListener("pointercancel", resetMobileJoystick);
     MOBILE_JOYSTICK.addEventListener("contextmenu", preventButtonFocus);
 }
+
 /**
  * Bind the mobile throw button to the space action.
  */
@@ -281,6 +283,7 @@ function bindMobileThrowButton() {
     MOBILE_THROW_BUTTON.addEventListener("pointerleave", stopMobileThrow);
     MOBILE_THROW_BUTTON.addEventListener("contextmenu", preventButtonFocus);
 }
+
 /**
  * Prevent touch and mouse buttons from stealing keyboard focus.
  * @param {PointerEvent} event - The pointer event

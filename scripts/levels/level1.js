@@ -80,7 +80,7 @@ function getSalsaBottlePositions() {
     const bottle1 = "assets/graphics/6_salsa_bottle/1_salsa_bottle_on_ground.png";
     const bottle2 = "assets/graphics/6_salsa_bottle/2_salsa_bottle_on_ground.png";
     return [
-        [bottle1, -500], [bottle2, -450], [bottle1, -200], [bottle2, -100],
+        [bottle1, -500], [bottle2, -450], [bottle1, -300], [bottle1, -200], [bottle2, -100],
         [bottle1, 400], [bottle2, 500], [bottle1, 700], [bottle2, 750],
         [bottle1, 1000], [bottle2, 1150], [bottle2, 1450], [bottle1, 1700],
         [bottle2, 1980], [bottle1, 2100]

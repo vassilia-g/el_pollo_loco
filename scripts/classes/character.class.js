@@ -87,6 +87,7 @@ class Character extends MoveableObject {
         this.lastMoveTime = Date.now();
         this.animate();
     }
+
     /**
      * Animate the character by changing the image every 100ms
      */
@@ -146,6 +147,7 @@ class Character extends MoveableObject {
         this.lastMoveTime = Date.now();
         return true;
     }
+
     /** @param {boolean} isMoving - Whether Pepe moved horizontally this frame. */
     updateStepSound(isMoving) {
         if (isMoving && !this.isJumping) {
@@ -155,6 +157,7 @@ class Character extends MoveableObject {
         }
         this.world.sounds.stopSteps();
     }
+
     /** Handle jump input. */
     handleJumpInput() {
         if (this.isDead()) {
@@ -165,6 +168,7 @@ class Character extends MoveableObject {
             this.world.keyboard.UP_PRESSED = false;
         }
     }
+
     /** Make the character jump. */
     jump() {
         if (!this.isJumping) {
