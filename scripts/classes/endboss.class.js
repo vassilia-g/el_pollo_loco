@@ -6,9 +6,15 @@ class Endboss extends MoveableObject {
     activeAnimation = "";
     target;
     attackFrames = 0;
+    walkingFrames = 0;
     recoveryFrames = 0;
+    gameEnded = false;
+    deathAnimationFinished = false;
+    deathFrameChangedAt = 0;
+    deathFrameDelay = 150;
     arenaMinX = 0;
     arenaMaxX = 2650;
+    collisionOffset = { top: 10, right: 20, bottom: 10, left: 20 };
     IMAGES_WALKING = [
         "assets/graphics/4_enemie_boss_chicken/1_walk/G1.png",
         "assets/graphics/4_enemie_boss_chicken/1_walk/G2.png",
@@ -92,8 +98,11 @@ class Endboss extends MoveableObject {
      * Update the boss animation based on its current state.
      */
     updateAnimation() {
+        if (this.gameEnded) {
+            return;
+        }
         if (this.isDead()) {
-            this.playStateAnimation(this.IMAGES_DEAD, "dead");
+            this.playDeathAnimationOnce();
             return;
         }
         if (this.playHurtIfNeeded()) {
@@ -144,6 +153,7 @@ class Endboss extends MoveableObject {
      */
     startWalking() {
         this.animationState = "walking";
+        this.walkingFrames = 0;
         this.currentImage = 0;
         this.activeAnimation = "walking";
         this.updateWalkingDirection();
@@ -158,7 +168,8 @@ class Endboss extends MoveableObject {
             return;
         }
         this.updateWalkingDirection();
-        if (this.isTargetInAttackRange()) {
+        this.walkingFrames++;
+        if (this.isTargetInAttackRange() || this.walkingFrames >= this.getAttackInterval()) {
             this.startAttack();
         }
     }
@@ -255,6 +266,14 @@ class Endboss extends MoveableObject {
     }
 
     /**
+     * Return how many walking frames pass before the next attack.
+     * @returns {number} Walking frames between attacks
+     */
+    getAttackInterval() {
+        return this.health <= 40 ? 8 : 12;
+    }
+
+    /**
      * Play an animation and reset the frame counter when the animation changes.
      * @param {string[]} images - Animation frames
      * @param {string} state - Current animation state name
@@ -268,6 +287,33 @@ class Endboss extends MoveableObject {
     }
 
     /**
+     * Play the death animation once and hold its final frame.
+     */
+    playDeathAnimationOnce() {
+        const now = Date.now();
+        if (this.deathAnimationFinished || now - this.deathFrameChangedAt < this.deathFrameDelay) {
+            return;
+        }
+        const index = this.currentImage;
+        const path = this.IMAGES_DEAD[index];
+        this.img = this.imageCache[path];
+        this.deathFrameChangedAt = now;
+        if (this.currentImage < this.IMAGES_DEAD.length - 1) {
+            this.currentImage++;
+            return;
+        }
+        this.deathAnimationFinished = true;
+    }
+
+    /**
+     * Check whether the boss death animation has completed.
+     * @returns {boolean} Whether the final death frame is visible
+     */
+    isDeathAnimationFinished() {
+        return this.isDead() && this.deathAnimationFinished && this.opacity === 0;
+    }
+
+    /**
      * Damage the endboss and restart the hurt animation.
      */
     hit() {
@@ -275,10 +321,46 @@ class Endboss extends MoveableObject {
         this.currentImage = 0;
         if (this.isDead()) {
             this.speed = 0;
+            this.otherDirection = false;
+            this.animationState = "dead";
+            this.activeAnimation = "dead";
+            this.deathFrameChangedAt = 0;
             this.fadeOut();
             return;
         }
         this.startRecovery();
+    }
+
+    /**
+     * Freeze the defeated boss after a win and keep him active after a loss.
+     * @param {boolean} gameWon - Whether the boss was defeated
+     */
+    stopAtGameEnd(gameWon) {
+        if (!gameWon) {
+            this.resumeWalkingAfterLoss();
+            return;
+        }
+        this.speed = 0;
+        this.gameEnded = true;
+        const lastDeadImage = this.IMAGES_DEAD[this.IMAGES_DEAD.length - 1];
+        this.img = this.imageCache[lastDeadImage];
+        this.animationState = "dead";
+        this.activeAnimation = "dead";
+    }
+
+    /**
+     * Leave combat mode and resume the original slow walk to the left.
+     */
+    resumeWalkingAfterLoss() {
+        this.target = undefined;
+        this.animationState = "walking";
+        this.activeAnimation = "walking";
+        this.attackFrames = 0;
+        this.walkingFrames = 0;
+        this.recoveryFrames = 0;
+        this.currentImage = 0;
+        this.otherDirection = false;
+        this.speed = 0.15;
     }
 
     /**

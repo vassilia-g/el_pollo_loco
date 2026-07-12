@@ -6,7 +6,7 @@ class World {
     level = createLevel1();
     camera_x_float = 0;
     camera_x = 0;
-    activeEnemyCollisions = new Set();
+    activeEnemyCollisions = new Map();
     throwableSalsas = [];
     collectedCoins = 0;
     collectedBottles = 0;
@@ -19,8 +19,6 @@ class World {
     collisionIntervals = [];
     animationFrameId;
     stopped = false;
-    
-
     /**x
      * The constructor of the World class. It initializes the canvas context and starts the drawing loop.
      * @param {HTMLCanvasElement} canvas - The canvas element where the game will be drawn
@@ -73,7 +71,7 @@ class World {
             return;
         }
         const endboss = this.getEndboss();
-        if (endboss && endboss.isDead()) {
+        if (endboss?.isDeathAnimationFinished()) {
             this.winGame();
         }
     }
@@ -96,8 +94,8 @@ class World {
     stopGameplayInput() {
         this.keyboard.block();
         hideMobileControls();
+        this.getEndboss()?.stopAtGameEnd(this.gameWon);
     }
-
     /** @returns {Endboss|undefined} The level endboss. */
     getEndboss() {
         return this.level.chicken.find(enemy => enemy instanceof Endboss);
@@ -141,19 +139,22 @@ class World {
     }
 
     /**
-     * Damage the character if it collides with a chicken and hasn't already been damaged by that chicken in the current collision.
+     * Damage the character at most once per second for each colliding enemy.
      * @param {Chicken} chicken - The chicken that is colliding with the character
      */
     damageCharacterOnce(chicken) {
         if (this.isGameOver()) {
             return;
         }
-        if (!this.activeEnemyCollisions.has(chicken)) {
-            this.character.hit();
-            this.sounds.playCharacterHurt();
-            this.statusBars.setHealth(this.character.health);
+        const now = Date.now();
+        const lastDamageAt = this.activeEnemyCollisions.get(chicken) || 0;
+        if (now - lastDamageAt < 1000) {
+            return;
         }
-        this.activeEnemyCollisions.add(chicken);
+        this.character.hit();
+        this.sounds.playCharacterHurt();
+        this.statusBars.setHealth(this.character.health);
+        this.activeEnemyCollisions.set(chicken, now);
     }
 
     /**
