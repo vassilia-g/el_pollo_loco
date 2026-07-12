@@ -1,3 +1,6 @@
+/**
+ * Manages gameplay music and sound effects.
+ */
 class GameSounds {
     steps = new Audio("assets/audio/steps.mp3");
     jump = new Audio("assets/audio/jump.mp3");

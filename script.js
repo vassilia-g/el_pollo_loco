@@ -41,6 +41,9 @@ function startGameOnPlayClick(event) {
     bindEndScreenEvents();
 }
 
+/**
+ * Remove the start-screen event listeners after gameplay begins.
+ */
 function unbindStartScreenEvents() {
     CANVAS.removeEventListener("click", startGameOnPlayClick);
     CANVAS.removeEventListener("mousemove", updatePlayButtonHover);
@@ -48,6 +51,9 @@ function unbindStartScreenEvents() {
     CANVAS.style.cursor = "default";
 }
 
+/**
+ * Bind the mouse events used by the game-over and win screens.
+ */
 function bindEndScreenEvents() {
     CANVAS.addEventListener("click", restartGameOnClick);
     CANVAS.addEventListener("click", goHomeOnClick);
@@ -65,6 +71,10 @@ function startGame() {
     applyMuteState();
 }
 
+/**
+ * Toggle the mute state when the canvas mute button is clicked.
+ * @param {MouseEvent} event - The canvas click event
+ */
 function toggleMuteOnCanvasClick(event) {
     if (!canvasMuteButton.isClicked(event)) {
         return;
@@ -74,6 +84,10 @@ function toggleMuteOnCanvasClick(event) {
     redrawVisibleScreen();
 }
 
+/**
+ * Update the mute button hover state and redraw the visible screen.
+ * @param {MouseEvent} event - The mouse move event
+ */
 function updateMuteButtonHover(event) {
     if (!canvasMuteButton.updateHover(event)) {
         return;
@@ -82,6 +96,9 @@ function updateMuteButtonHover(event) {
     redrawVisibleScreen();
 }
 
+/**
+ * Clear the mute button hover state when the cursor leaves the canvas.
+ */
 function clearMuteButtonHover() {
     if (!canvasMuteButton.clearHover()) {
         return;
@@ -90,6 +107,9 @@ function clearMuteButtonHover() {
     redrawVisibleScreen();
 }
 
+/**
+ * Toggle and persist the global mute state.
+ */
 function toggleMute() {
     isMuted = !isMuted;
     localStorage.setItem(MUTE_STORAGE_KEY, String(isMuted));
@@ -109,6 +129,9 @@ function applyMuteState() {
     world.sounds.getAllSounds().forEach(sound => sound.muted = isMuted);
 }
 
+/**
+ * Redraw the currently visible screen outside active gameplay.
+ */
 function redrawVisibleScreen() {
     if (!gameScreens) {
         return;
@@ -118,6 +141,9 @@ function redrawVisibleScreen() {
     }
 }
 
+/**
+ * Update the canvas cursor based on the mute button hover state.
+ */
 function updateCanvasCursor() {
     CANVAS.style.cursor = canvasMuteButton.isHovered ? "pointer" : "default";
 }
@@ -203,7 +229,13 @@ function clearHomeButtonHover() {
     }
     gameScreens.clearHomeButtonHover(world.ctx);
 }
+
+/**
+ * Check whether the game-over or win screen is visible.
+ * @returns {boolean} Whether an end screen is visible
+ */
 function isEndScreenVisible() { return world && (world.gameLost || world.gameWon); }
+
 /**
  * Show mobile controls while a game is running.
  */
@@ -272,12 +304,21 @@ function moveMobileJoystick(event) {
     updateJoystickFromEvent(event);
 }
 
+/**
+ * Update the joystick position and corresponding keyboard flags.
+ * @param {PointerEvent} event - The pointer event
+ */
 function updateJoystickFromEvent(event) {
     const offset = getJoystickOffset(event);
     updateJoystickKnob(offset.x, offset.y);
     updateJoystickKeyboard(offset.x, offset.y);
 }
 
+/**
+ * Calculate the constrained joystick offset for a pointer event.
+ * @param {PointerEvent} event - The pointer event
+ * @returns {{x: number, y: number}} The constrained joystick offset
+ */
 function getJoystickOffset(event) {
     const rect = MOBILE_JOYSTICK.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;

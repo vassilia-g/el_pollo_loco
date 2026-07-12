@@ -377,7 +377,7 @@ class World {
         }
         if (endboss.x + this.camera_x <= CANVAS.width - 100) {
             this.endbossActivated = true;
-            endboss.startAlert();
+            endboss.startAlert(this.character);
             this.sounds.startEndbossLoop();
         }
     }

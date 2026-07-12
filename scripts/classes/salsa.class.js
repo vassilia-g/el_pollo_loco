@@ -1,3 +1,6 @@
+/**
+ * Represents a collectible and throwable salsa bottle.
+ */
 class Salsa extends MoveableObject {
     width = 60;
     height = 60;

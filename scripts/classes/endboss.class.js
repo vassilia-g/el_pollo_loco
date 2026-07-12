@@ -4,6 +4,11 @@
 class Endboss extends MoveableObject {
     animationState = "walking";
     activeAnimation = "";
+    target;
+    attackFrames = 0;
+    recoveryFrames = 0;
+    arenaMinX = 0;
+    arenaMaxX = 2650;
     IMAGES_WALKING = [
         "assets/graphics/4_enemie_boss_chicken/1_walk/G1.png",
         "assets/graphics/4_enemie_boss_chicken/1_walk/G2.png",
@@ -63,7 +68,7 @@ class Endboss extends MoveableObject {
      * Animate the endboss by changing the image every 150ms
      */
     animate() {
-        this.moveLeft();
+        this.moveWithinArena();
         this.setManagedInterval(() => {
             this.updateAnimation();
         }, 150);      
@@ -71,10 +76,13 @@ class Endboss extends MoveableObject {
 
     /**
      * Start the endboss encounter with the alert animation.
+     * @param {Character} target - Character targeted by the endboss
      */
-    startAlert() {
+    startAlert(target) {
         if (this.animationState === "walking") {
+            this.target = target;
             this.animationState = "alert";
+            this.speed = 0;
             this.currentImage = 0;
             this.activeAnimation = "alert";
         }
@@ -101,10 +109,14 @@ class Endboss extends MoveableObject {
             return;
         }
         if (this.animationState === "attack") {
-            this.playStateAnimation(this.IMAGES_ATTACK, "attack");
+            this.playAttackAnimation();
             return;
         }
-        this.playStateAnimation(this.IMAGES_WALKING, "walking");
+        if (this.animationState === "recover") {
+            this.playRecoveryAnimation();
+            return;
+        }
+        this.playWalkingAnimation();
     }
 
     /** @returns {boolean} True when the hurt animation was used. */
@@ -118,16 +130,131 @@ class Endboss extends MoveableObject {
     }
 
     /**
-     * Play the alert animation once and then switch to attack.
+     * Play the alert animation once and then start pursuing the character.
      */
     playAlertAnimation() {
         this.playStateAnimation(this.IMAGES_ALERT, "alert");
         if (this.currentImage >= this.IMAGES_ALERT.length) {
-            this.speed = 0;
-            this.animationState = "attack";
-            this.currentImage = 0;
-            this.activeAnimation = "attack";
+            this.startWalking();
         }
+    }
+
+    /**
+     * Start pursuing the character with the walking animation.
+     */
+    startWalking() {
+        this.animationState = "walking";
+        this.currentImage = 0;
+        this.activeAnimation = "walking";
+        this.updateWalkingDirection();
+    }
+
+    /**
+     * Walk toward the character and attack once the collision range is reached.
+     */
+    playWalkingAnimation() {
+        this.playStateAnimation(this.IMAGES_WALKING, "walking");
+        if (!this.target) {
+            return;
+        }
+        this.updateWalkingDirection();
+        if (this.isTargetInAttackRange()) {
+            this.startAttack();
+        }
+    }
+
+    /**
+     * Update movement speed and sprite direction toward the character.
+     */
+    updateWalkingDirection() {
+        if (!this.target) {
+            return;
+        }
+        const targetCenter = this.target.x + this.target.width / 2;
+        const bossCenter = this.x + this.width / 2;
+        const movesLeft = targetCenter < bossCenter;
+        this.speed = movesLeft ? this.getWalkingSpeed() : -this.getWalkingSpeed();
+        this.otherDirection = !movesLeft;
+    }
+
+    /**
+     * Check whether the boss is close enough to hit the character.
+     * @returns {boolean} Whether the character is inside attack range
+     */
+    isTargetInAttackRange() {
+        const targetCenter = this.target.x + this.target.width / 2;
+        const bossCenter = this.x + this.width / 2;
+        const collisionDistance = (this.width + this.target.width) / 2;
+        return Math.abs(targetCenter - bossCenter) <= collisionDistance;
+    }
+
+    /**
+     * Stop walking and start the attack animation.
+     */
+    startAttack() {
+        this.speed = 0;
+        this.animationState = "attack";
+        this.attackFrames = 0;
+        this.currentImage = 0;
+        this.activeAnimation = "attack";
+    }
+
+    /**
+     * Play one complete attack animation and then enter recovery.
+     */
+    playAttackAnimation() {
+        this.playStateAnimation(this.IMAGES_ATTACK, "attack");
+        this.attackFrames++;
+        if (this.attackFrames >= this.IMAGES_ATTACK.length) {
+            this.startRecovery();
+        }
+    }
+
+    /**
+     * Stop movement briefly before pursuing the character again.
+     */
+    startRecovery() {
+        this.speed = 0;
+        this.animationState = "recover";
+        this.recoveryFrames = 0;
+        this.currentImage = 0;
+        this.activeAnimation = "recover";
+    }
+
+    /**
+     * Hold a standing frame briefly and then resume walking.
+     */
+    playRecoveryAnimation() {
+        this.img = this.imageCache[this.IMAGES_WALKING[0]];
+        this.recoveryFrames++;
+        if (this.recoveryFrames >= this.getRecoveryDuration()) {
+            this.startWalking();
+        }
+    }
+
+    /**
+     * Move the boss according to its signed speed without leaving the level.
+     */
+    moveWithinArena() {
+        this.setManagedInterval(() => {
+            this.x = Math.max(this.arenaMinX, Math.min(this.x - this.speed, this.arenaMaxX));
+        }, 1000 / 60);
+    }
+
+    /**
+     * Return a faster walking speed during the final part of the fight.
+     * @returns {number} Walking speed in pixels per movement tick
+     */
+    getWalkingSpeed() {
+        return this.health <= 40 ? 3 : 2;
+    }
+
+    /**
+     * Return a shorter recovery duration while the boss has low health.
+     * @returns {number} Recovery duration in animation frames
+     */
+    getRecoveryDuration() {
+        return this.health <= 40 ? 2 : 4;
     }
 
     /**
@@ -152,7 +279,9 @@ class Endboss extends MoveableObject {
         if (this.isDead()) {
             this.speed = 0;
             this.fadeOut();
+            return;
         }
+        this.startRecovery();
     }
 
     /**

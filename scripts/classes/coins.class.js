@@ -1,3 +1,6 @@
+/**
+ * Represents a collectible coin in the game world.
+ */
 class Coins extends MoveableObject {
     height = 100;
     width = 100;
