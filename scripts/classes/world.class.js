@@ -169,7 +169,7 @@ class World {
      */
     checkCoinCollisions() {
         this.level.coins.forEach(coin => {
-            if (coin.visible && !coin.collected && this.character.isColliding(coin)) {
+            if (coin.visible && !coin.collected && this.character.isCollecting(coin)) {
                 this.collectCoin(coin);
             }
         });
@@ -192,7 +192,7 @@ class World {
      */
     checkSalsaCollisions() {
         this.level.salsa.forEach(salsa => {
-            if (salsa.visible && !salsa.collected && this.character.isColliding(salsa)) {
+            if (salsa.visible && !salsa.collected && this.character.isCollecting(salsa)) {
                 this.collectSalsa(salsa);
             }
         });

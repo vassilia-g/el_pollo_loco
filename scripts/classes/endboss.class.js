@@ -182,10 +182,7 @@ class Endboss extends MoveableObject {
      * @returns {boolean} Whether the character is inside attack range
      */
     isTargetInAttackRange() {
-        const targetCenter = this.target.x + this.target.width / 2;
-        const bossCenter = this.x + this.width / 2;
-        const collisionDistance = (this.width + this.target.width) / 2;
-        return Math.abs(targetCenter - bossCenter) <= collisionDistance;
+        return this.target.isColliding(this);
     }
 
     /**

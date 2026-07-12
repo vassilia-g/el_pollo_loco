@@ -5,6 +5,7 @@ class Salsa extends MoveableObject {
     width = 60;
     height = 60;
     y = 412;
+    collectionOffset = { top: 5, right: 25, bottom: 5, left: 25 };
     isThrown = false;
     splashing = false;
     sounds;

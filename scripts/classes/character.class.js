@@ -17,6 +17,8 @@ class Character extends MoveableObject {
     deathAnimationFinished = false;
     deathFallSpeed = 0;
     deathFallAcceleration = 0.15;
+    collisionOffset = { top: 75, right: 35, bottom: 5, left: 35 };
+    collectionOffset = { top: 75, right: 15, bottom: 5, left: 15 };
     IMAGES_WALKING = [
         "assets/graphics/2_character_pepe/2_walk/W-21.png",
         "assets/graphics/2_character_pepe/2_walk/W-22.png",
@@ -85,7 +87,6 @@ class Character extends MoveableObject {
         this.lastMoveTime = Date.now();
         this.animate();
     }
-
     /**
      * Animate the character by changing the image every 100ms
      */

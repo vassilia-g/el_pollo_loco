@@ -19,6 +19,8 @@ class MoveableObject {
     opacity = 1;
     visible = true;
     intervals = [];
+    collisionOffset = { top: 0, right: 0, bottom: 0, left: 0 };
+    collectionOffset = { top: 0, right: 0, bottom: 0, left: 0 };
 
     /**
      * Draw the object on the canvas.
@@ -105,10 +107,52 @@ class MoveableObject {
      * @returns {boolean} True if there is a collision, false otherwise.
      */
     isColliding(mo) {
-        return this.x + this.width > mo.x &&
-               this.x < mo.x + mo.width &&
-               this.y + this.height > mo.y &&
-               this.y < mo.y + mo.height;
+        const ownBounds = this.getCollisionBounds();
+        const otherBounds = mo.getCollisionBounds();
+        return ownBounds.right > otherBounds.left &&
+               ownBounds.left < otherBounds.right &&
+               ownBounds.bottom > otherBounds.top &&
+               ownBounds.top < otherBounds.bottom;
+    }
+
+    /**
+     * Return object bounds reduced by its collision offsets.
+     * @returns {{top: number, right: number, bottom: number, left: number}} Reduced bounds
+     */
+    getCollisionBounds() {
+        return {
+            top: this.y + this.collisionOffset.top,
+            right: this.x + this.width - this.collisionOffset.right,
+            bottom: this.y + this.height - this.collisionOffset.bottom,
+            left: this.x + this.collisionOffset.left
+        };
+    }
+
+    /**
+     * Check whether the reduced collection areas of two objects overlap.
+     * @param {MoveableObject} collectible - Collectible object to check
+     * @returns {boolean} Whether both collection areas overlap
+     */
+    isCollecting(collectible) {
+        const ownBounds = this.getCollectionBounds();
+        const collectibleBounds = collectible.getCollectionBounds();
+        return ownBounds.right > collectibleBounds.left &&
+               ownBounds.left < collectibleBounds.right &&
+               ownBounds.bottom > collectibleBounds.top &&
+               ownBounds.top < collectibleBounds.bottom;
+    }
+
+    /**
+     * Return object bounds reduced by its collection offsets.
+     * @returns {{top: number, right: number, bottom: number, left: number}} Reduced bounds
+     */
+    getCollectionBounds() {
+        return {
+            top: this.y + this.collectionOffset.top,
+            right: this.x + this.width - this.collectionOffset.right,
+            bottom: this.y + this.height - this.collectionOffset.bottom,
+            left: this.x + this.collectionOffset.left
+        };
     }
 
     /**

@@ -5,6 +5,7 @@ class Coins extends MoveableObject {
     height = 100;
     width = 100;
     y = 375;
+    collectionOffset = { top: 30, right: 45, bottom: 30, left: 45 };
     IMAGES_COINS = [
         "assets/graphics/8_coin/coin_1.png",
         "assets/graphics/8_coin/coin_2.png"
